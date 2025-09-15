@@ -1,12 +1,12 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import { lazy, StrictMode } from "react";
 
 const HomeOutlet = lazy(() => import("./pages/outlet"));
 const Homepage = lazy(() => import("./pages/App"));
 const Upload = lazy(() => import("./pages/Upload"));
-const Doc = lazy(() => import("./pages/Doc"));
+const Doc = lazy(() => import("./pages/doc/Doc"));
 
 const router = createBrowserRouter([
   {
@@ -25,7 +25,13 @@ const router = createBrowserRouter([
   },
   {
     path: "/doc",
-    Component: Doc,
+    Component: Outlet,
+    children: [
+      {
+        path: ":doc-id",
+        Component: Doc,
+      },
+    ],
   },
 ]);
 

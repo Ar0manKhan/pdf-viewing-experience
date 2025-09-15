@@ -22,10 +22,10 @@ async function bulkSetDocs(docs: Doc[]) {
   return Promise.all(docs.map((doc) => store.put(doc)));
 }
 
-async function getDoc(id: number) {
+async function getDoc(id: string) {
   const tx = (await db).transaction(Stores.Docs, "readonly");
   const store = tx.objectStore(Stores.Docs);
-  return await store.get(id);
+  return (await store.get(id)) as Doc | undefined;
 }
 
 async function getDocs() {

@@ -12,8 +12,6 @@ import { useDebouncedScale } from "@/hooks/useDebouncedScale";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-const url = "/b-tree.pdf";
-
 export default function PdfCanvas() {
   const [pageCounts, setPageCounts] = useState<number[]>([]);
   const { debouncedScale } = useDebouncedScale();
@@ -37,6 +35,7 @@ export default function PdfCanvas() {
     },
     [setPageHeight, setPdf],
   );
+  const pdfBlob = usePdfTextStore((e) => e.pdfBlob);
   return (
     <div className="flex  flex-col items-center justify-center bg-green-300 min-w-4/5 w-4/5">
       <div
@@ -44,7 +43,7 @@ export default function PdfCanvas() {
         ref={ref}
       >
         <Document
-          file={url}
+          file={pdfBlob}
           onLoadSuccess={onDocumentLoadSuccess}
           scale={debouncedScale}
         >

@@ -11,6 +11,8 @@ export type TextPart = {
 };
 
 type PdfTextStoreProp = {
+  pdfBlob: Blob | null;
+  setPdfBlob: (pdfBlob: Blob) => void;
   pdf: pdfjs.PDFDocumentProxy | undefined;
   setPdf: (pdf: pdfjs.PDFDocumentProxy) => void;
   store: Map<number, TextPart[]>;
@@ -19,6 +21,10 @@ type PdfTextStoreProp = {
 };
 
 const usePdfTextStore = create<PdfTextStoreProp>((set, get) => ({
+  pdfBlob: null,
+  setPdfBlob: (pdfBlob) => {
+    set({ pdfBlob });
+  },
   pdf: undefined,
   setPdf: (pdf) => {
     set({ pdf });
