@@ -45,8 +45,9 @@ export default function PdfCanvas() {
       targetPage <= renderedRows.overscanStopIndex
     )
       return undefined;
+    if (pageCount === 0) return undefined;
     return targetPage;
-  }, [followMode, pdfPage, renderedRows]);
+  }, [followMode, pageCount, pdfPage, renderedRows]);
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = useCallback(
     async (pdf) => {
