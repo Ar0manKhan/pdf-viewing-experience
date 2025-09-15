@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { Button } from "./ui/button";
 import usePdfTextStore from "@/stores/pdf-text-store";
+import chunk from "lodash-es/chunk";
 
 export default function TTSPdf() {
   // get the first page data
@@ -8,18 +9,19 @@ export default function TTSPdf() {
   // send each sentence to tts one by one
   const getPageText = usePdfTextStore((e) => e.getPageTexts);
   const handleSpeak = useCallback(() => {
-    const pageTexts = getPageText(1);
-    if (!Array.isArray(pageTexts) || pageTexts.length === 0) return;
-
     const availableVoices = window.speechSynthesis.getVoices();
     const defaultVoice =
       availableVoices.find((voice) => voice.lang.includes("en")) ||
       availableVoices[0];
     const rate = 1;
     const pitch = 1;
-    pageTexts.forEach((textPart) => {
-      console.log("speaking", textPart.text);
-      const utterance = new SpeechSynthesisUtterance(textPart.text);
+    const pageTexts = getPageText(1);
+    if (!Array.isArray(pageTexts) || pageTexts.length === 0) return;
+    const textChunks = chunk(pageTexts, 20);
+    textChunks.forEach((c) => {
+      const utterance = new SpeechSynthesisUtterance(
+        c.map((e) => e.text).join(" "),
+      );
       utterance.voice = defaultVoice;
       utterance.pitch = pitch;
       utterance.rate = rate;
