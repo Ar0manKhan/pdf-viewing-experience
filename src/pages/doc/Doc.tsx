@@ -3,6 +3,7 @@ import { ErrorCard } from "@/components/ErrorCard";
 import { DocumentSidebar } from "@/components/DocumentSidebar";
 import { getDoc } from "@/lib/indexedDb/docStore";
 import usePdfTextStore from "@/stores/pdf-text-store";
+import usePdfIdbStore from "@/stores/pdf-idb-store";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Loader2 } from "lucide-react";
@@ -20,6 +21,9 @@ export default function Doc() {
   const [error, setError] = useState<string | null>(null);
   const cleanTextStore = usePdfTextStore((e) => e.clean);
   const cleanTTSStore = useTTSStore((e) => e.clean);
+  const cleanIdbStore = usePdfIdbStore((e) => e.clean);
+  const setPdfIdb = usePdfIdbStore((e) => e.setData);
+  const setPlayingPosition = useTTSStore((e) => e.setPosition);
 
   useEffect(() => {
     async function loadDoc() {
@@ -38,11 +42,19 @@ export default function Doc() {
           setIsLoading(false);
           return;
         }
+        if (doc.lastPlayed) {
+          setPlayingPosition(
+            doc.lastPlayed.page,
+            doc.lastPlayed.part,
+            doc.lastPlayed.part,
+          );
+        }
         setDocInfo({
           name: doc.name,
           size: doc.size,
           createdAt: doc.createdAt,
         });
+        setPdfIdb(doc);
         setPdfBlob(doc.data);
         setIsLoading(false);
       } catch (err) {
@@ -55,8 +67,17 @@ export default function Doc() {
     return () => {
       cleanTextStore();
       cleanTTSStore();
+      cleanIdbStore();
     };
-  }, [cleanTTSStore, cleanTextStore, params, setPdfBlob]);
+  }, [
+    cleanIdbStore,
+    cleanTTSStore,
+    cleanTextStore,
+    params,
+    setPdfBlob,
+    setPdfIdb,
+    setPlayingPosition,
+  ]);
 
   if (isLoading) {
     return (

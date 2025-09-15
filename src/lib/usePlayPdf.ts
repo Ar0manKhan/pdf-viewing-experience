@@ -1,8 +1,10 @@
 import usePdfTextStore from "@/stores/pdf-text-store";
 import useTTSStore from "@/stores/pdf-tts-store";
 import preloadTextParts from "./preloadTextParts";
+import usePdfIdbStore from "@/stores/pdf-idb-store";
 import chunk from "lodash-es/chunk";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { setDoc } from "./indexedDb/docStore";
 
 const CHUNK_SIZE = 50;
 
@@ -13,7 +15,15 @@ export default function usePlayPdf() {
   const totalPageCount = useMemo(() => pdf?.numPages ?? 0, [pdf]);
   const voice = useTTSStore((e) => e.voice);
   const setPlaying = useTTSStore((e) => e.setPlaying);
+  const pdfIdbData = usePdfIdbStore((e) => e.data);
+  const setPdfIdbLastPlayed = usePdfIdbStore((e) => e.setLastPlayedData);
   const resetTts = useTTSStore((e) => e.resetPosition);
+
+  useEffect(() => {
+    if (pdfIdbData) {
+      setDoc(pdfIdbData);
+    }
+  }, [pdfIdbData]);
 
   const speechEnd = useCallback(() => {
     setPlaying(false);
@@ -68,6 +78,10 @@ export default function usePlayPdf() {
         const currentStartPosition = position + chunkIndex * CHUNK_SIZE;
         const currentEndPosition = position + (chunkIndex + 1) * CHUNK_SIZE;
         setPosition(pageNum, currentStartPosition, currentEndPosition);
+        setPdfIdbLastPlayed({
+          page: pageNum,
+          part: currentStartPosition,
+        });
         setPlaying(true);
       });
 
@@ -80,6 +94,7 @@ export default function usePlayPdf() {
     [
       getPageText,
       pdf,
+      setPdfIdbLastPlayed,
       setPlaying,
       setPosition,
       speechEnd,
