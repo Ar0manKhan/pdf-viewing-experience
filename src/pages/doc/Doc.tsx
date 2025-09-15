@@ -81,8 +81,8 @@ export default function Doc() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Unified Sidebar with metadata and controls */}
+    <div className="min-h-screen bg-background md:flex">
+      {/* Responsive Sidebar/Header */}
       <DocumentSidebar docInfo={docInfo} />
 
       {/* PDF Viewer - takes full remaining space */}
