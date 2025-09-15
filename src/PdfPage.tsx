@@ -50,10 +50,10 @@ export default function PdfPage({ pageNumber }: PdfPageProps) {
           key={idx}
           className="absolute bg-amber-100 hover:bg-amber-300 z-10 opacity-30 cursor-pointer"
           style={{
-            left: highlight.x,
-            top: highlight.y,
-            width: highlight.width,
-            height: highlight.height,
+            left: highlight.x * 2,
+            top: highlight.y * 2,
+            width: highlight.width * 2,
+            height: highlight.height * 2,
           }}
           title={highlight.text}
         />

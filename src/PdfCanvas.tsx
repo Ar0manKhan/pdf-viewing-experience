@@ -11,15 +11,25 @@ const url = "/b-tree.pdf";
 
 export default function PdfCanvas() {
   const [pageCounts, setPageCounts] = useState<number[]>([]);
-  const [pageDim, setPageDim] = useState({ height: 0, width: 0 });
+  const [scale, setScale] = useState(1);
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = useCallback(
-    async ({ numPages }) => {
+    async ({ numPages, getPage }) => {
       // take a middle page for page dimension
       setPageCounts(Array.from({ length: numPages }, (_, i) => i + 1));
+      if (numPages > 2) {
+        console.log("get page", getPage(2));
+      }
     },
     [],
   );
+  const zoomIn = useCallback(() => {
+    setScale(scale + 0.1);
+  }, [scale]);
+  const zoomOut = useCallback(() => {
+    setScale(scale - 0.1);
+  }, [scale]);
+
   return (
     <div className="flex flex-col items-center justify-center bg-green-300">
       {/*<p>
