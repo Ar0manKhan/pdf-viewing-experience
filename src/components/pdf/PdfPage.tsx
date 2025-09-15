@@ -1,7 +1,7 @@
 import { Page } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
-import { memo, useCallback, type CSSProperties } from "react";
+import { memo, useCallback } from "react";
 import type { PageCallback } from "react-pdf/src/shared/types.js";
 import { usePdfUiStore } from "../../stores/pdf-ui-store";
 import usePdfTextStore, { type TextPart } from "@/stores/pdf-text-store";
@@ -13,10 +13,7 @@ type PdfPageProps = {
   pageNumber: number;
 };
 
-const PdfPage = memo(function ({
-  pageNumber,
-  style,
-}: PdfPageProps & { style: CSSProperties }) {
+const PdfPage = memo(function ({ pageNumber }: PdfPageProps) {
   const highlights = usePdfTextStore((e) => e.store.get(pageNumber));
   const ttsPage = useTTSStore((e) => e.page);
   const ttsPosition = useTTSStore((e) => e.position);
@@ -30,29 +27,27 @@ const PdfPage = memo(function ({
       const newHighlights = await getTextParts(page);
       setHighlights(pageNumber, newHighlights);
     },
-    [highlights, pageNumber, setHighlights]
+    [highlights, pageNumber, setHighlights],
   );
   return (
-    <div style={style}>
-      <div className="relative">
-        <Page pageNumber={pageNumber} onLoadSuccess={onPageLoadSuccess} />
-        {mode === "reader" &&
-          highlights?.map((highlight, idx) => (
-            <Highlight
-              key={idx}
-              partInfo={highlight}
-              highlight={
-                ttsPage === pageNumber &&
-                idx >= ttsPosition.start &&
-                idx < ttsPosition.end &&
-                pdfIsPlaying
-              }
-              idx={idx}
-              pageNum={pageNumber}
-              playPdf={playPdf}
-            />
-          ))}
-      </div>
+    <div className="relative">
+      <Page pageNumber={pageNumber} onLoadSuccess={onPageLoadSuccess} />
+      {mode === "reader" &&
+        highlights?.map((highlight, idx) => (
+          <Highlight
+            key={idx}
+            partInfo={highlight}
+            highlight={
+              ttsPage === pageNumber &&
+              idx >= ttsPosition.start &&
+              idx < ttsPosition.end &&
+              pdfIsPlaying
+            }
+            idx={idx}
+            pageNum={pageNumber}
+            playPdf={playPdf}
+          />
+        ))}
     </div>
   );
 });
@@ -73,7 +68,7 @@ const Highlight = memo(function ({
   const scale = usePdfUiStore((e) => e.scale);
   const clickFn = useCallback(
     () => playPdf(pageNum, idx),
-    [idx, pageNum, playPdf]
+    [idx, pageNum, playPdf],
   );
   return (
     <div

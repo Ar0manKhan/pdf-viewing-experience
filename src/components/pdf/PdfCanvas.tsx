@@ -1,14 +1,7 @@
 import { pdfjs, Document } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
-import {
-  Suspense,
-  lazy,
-  useCallback,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import { Suspense, useCallback, useRef, useState, type RefObject } from "react";
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
 import { usePdfUiStore } from "../../stores/pdf-ui-store";
 import useElementSize from "../../lib/useElementSize";
@@ -17,8 +10,7 @@ import { useDebouncedScale } from "@/hooks/useDebouncedScale";
 import getMajorityHeight from "@/lib/getMajorityHeight";
 import { Skeleton } from "../ui/skeleton";
 import List from "react-virtualized/dist/es/List";
-
-const PdfPage = lazy(() => import("./PdfPage"));
+import PdfPage from "./PdfPage";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -40,7 +32,7 @@ export default function PdfCanvas() {
         setPageHeight(await getMajorityHeight(pdf));
       }
     },
-    [setPageHeight, setPdf]
+    [setPageHeight, setPdf],
   );
   const pdfBlob = usePdfTextStore((e) => e.pdfBlob);
   return (
@@ -62,13 +54,9 @@ export default function PdfCanvas() {
               rowCount={pageCount}
               overscanRowCount={1}
               rowRenderer={({ index, style, key }) => (
-                <Suspense
-                  fallback={
-                    <Skeleton style={style} className="h-full w-full" />
-                  }
-                >
-                  <PdfPage key={key} pageNumber={index + 1} style={style} />
-                </Suspense>
+                <div style={style} key={key}>
+                  <PdfPage key={key} pageNumber={index + 1} />
+                </div>
               )}
             />
           </Document>

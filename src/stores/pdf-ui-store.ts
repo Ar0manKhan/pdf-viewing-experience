@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type ReadingMode = "selection" | "reader";
 
@@ -11,11 +12,18 @@ type PdfUiStore = {
   setMode: (mode: ReadingMode) => void;
 };
 
-export const usePdfUiStore = create<PdfUiStore>((set) => ({
-  scale: 1.5,
-  height: 0,
-  mode: "reader",
-  setScale: (scale) => set({ scale }),
-  setHeight: (height) => set({ height }),
-  setMode: (mode) => set({ mode }),
-}));
+export const usePdfUiStore = create<PdfUiStore>()(
+  persist(
+    (set) => ({
+      scale: 1.5,
+      height: 0,
+      mode: "reader",
+      setScale: (scale) => set({ scale }),
+      setHeight: (height) => set({ height }),
+      setMode: (mode) => set({ mode }),
+    }),
+    {
+      name: "pdf-ui-storage", // name of the item in the storage (must be unique)
+    },
+  ),
+);
