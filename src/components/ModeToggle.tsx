@@ -17,11 +17,11 @@ export default function ModeToggle() {
     >
       <ToggleGroupItem value="selection" variant="blackWhite" size="sm">
         <Type className="h-4 w-4" />
-        Selection Mode
+        Selection
       </ToggleGroupItem>
       <ToggleGroupItem value="reader" variant="blackWhite" size="sm">
         <BookOpen className="h-4 w-4" />
-        Reader Mode
+        Reader
       </ToggleGroupItem>
     </ToggleGroup>
   );
