@@ -1,15 +1,24 @@
 import { pdfjs, Document } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
-import { useCallback, useRef, useState, type RefObject } from "react";
-import PdfPage from "./PdfPage";
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
 import { usePdfUiStore } from "../../stores/pdf-ui-store";
-import { List } from "react-virtualized/dist/es/List";
 import useElementSize from "../../lib/useElementSize";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import { useDebouncedScale } from "@/hooks/useDebouncedScale";
 import getMajorityHeight from "@/lib/getMajorityHeight";
+import { Skeleton } from "../ui/skeleton";
+import List from "react-virtualized/dist/es/List";
+
+const PdfPage = lazy(() => import("./PdfPage"));
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -40,22 +49,30 @@ export default function PdfCanvas() {
         className="w-full h-full overflow-hidden relative bg-white shadow-sm"
         ref={ref}
       >
-        <Document
-          file={pdfBlob}
-          onLoadSuccess={onDocumentLoadSuccess}
-          scale={debouncedScale}
-        >
-          <List
-            height={size?.height || 0}
-            width={size?.width || 0}
-            rowHeight={pageHeight * debouncedScale}
-            rowCount={pageCount}
-            overscanRowCount={1}
-            rowRenderer={({ index, style, key }) => (
-              <PdfPage key={key} pageNumber={index + 1} style={style} />
-            )}
-          />
-        </Document>
+        <Suspense fallback={<Skeleton className="h-full w-full" />}>
+          <Document
+            file={pdfBlob}
+            onLoadSuccess={onDocumentLoadSuccess}
+            scale={debouncedScale}
+          >
+            <List
+              height={size?.height || 0}
+              width={size?.width || 0}
+              rowHeight={pageHeight * debouncedScale}
+              rowCount={pageCount}
+              overscanRowCount={1}
+              rowRenderer={({ index, style, key }) => (
+                <Suspense
+                  fallback={
+                    <Skeleton style={style} className="h-full w-full" />
+                  }
+                >
+                  <PdfPage key={key} pageNumber={index + 1} style={style} />
+                </Suspense>
+              )}
+            />
+          </Document>
+        </Suspense>
       </div>
     </div>
   );

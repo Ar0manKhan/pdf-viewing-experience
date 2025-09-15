@@ -10,7 +10,7 @@ interface ErrorCardProps {
   backLabel?: string;
 }
 
-export function ErrorCard({
+export default function ErrorCard({
   title = "Error",
   message,
   backTo = "/",

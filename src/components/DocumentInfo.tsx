@@ -6,7 +6,11 @@ interface DocumentInfoProps {
   createdAt: number;
 }
 
-export function DocumentInfo({ name, size, createdAt }: DocumentInfoProps) {
+export default function DocumentInfo({
+  name,
+  size,
+  createdAt,
+}: DocumentInfoProps) {
   const formatFileSize = (bytes: number) => {
     const mb = bytes / 1024 / 1024;
     return `${mb.toFixed(2)} MB`;

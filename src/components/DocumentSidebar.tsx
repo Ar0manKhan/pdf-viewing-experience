@@ -8,9 +8,12 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { ArrowLeft, Menu } from "lucide-react";
-import { DocumentInfo } from "./DocumentInfo";
-import PageScale from "./pdf/PageScale";
-import TtsControls from "./TtsControls";
+import { Suspense, lazy } from "react";
+import { Skeleton } from "./ui/skeleton";
+
+const PageScale = lazy(() => import("./pdf/PageScale"));
+const TtsControls = lazy(() => import("./TtsControls"));
+const DocumentInfo = lazy(() => import("./DocumentInfo"));
 
 interface DocumentSidebarProps {
   docInfo: {
@@ -20,16 +23,20 @@ interface DocumentSidebarProps {
   } | null;
 }
 
-export function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
+export default function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
   const ControlsContent = () => (
     <div className="space-y-6">
       <div>
         <h2 className="font-semibold mb-3">Zoom Controls</h2>
-        <PageScale />
+        <Suspense fallback={<Skeleton className="h-10 w-full" />}>
+          <PageScale />
+        </Suspense>
       </div>
       <div>
         <h2 className="font-semibold mb-3">Text-to-Speech</h2>
-        <TtsControls />
+        <Suspense fallback={<Skeleton className="h-20 w-full" />}>
+          <TtsControls />
+        </Suspense>
       </div>
     </div>
   );
@@ -67,11 +74,13 @@ export function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
 
         {docInfo && (
           <div className="mt-4">
-            <DocumentInfo
-              name={docInfo.name}
-              size={docInfo.size}
-              createdAt={docInfo.createdAt}
-            />
+            <Suspense fallback={<Skeleton className="h-12 w-full" />}>
+              <DocumentInfo
+                name={docInfo.name}
+                size={docInfo.size}
+                createdAt={docInfo.createdAt}
+              />
+            </Suspense>
           </div>
         )}
       </div>
@@ -91,11 +100,13 @@ export function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
 
           {docInfo && (
             <div className="mt-4">
-              <DocumentInfo
-                name={docInfo.name}
-                size={docInfo.size}
-                createdAt={docInfo.createdAt}
-              />
+              <Suspense fallback={<Skeleton className="h-12 w-full" />}>
+                <DocumentInfo
+                  name={docInfo.name}
+                  size={docInfo.size}
+                  createdAt={docInfo.createdAt}
+                />
+              </Suspense>
             </div>
           )}
         </div>

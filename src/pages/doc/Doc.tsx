@@ -1,13 +1,15 @@
-import PdfCanvas from "@/components/pdf/PdfCanvas";
-import { ErrorCard } from "@/components/ErrorCard";
-import { DocumentSidebar } from "@/components/DocumentSidebar";
 import { getDoc } from "@/lib/indexedDb/docStore";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import usePdfIdbStore from "@/stores/pdf-idb-store";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Loader2 } from "lucide-react";
 import useTTSStore from "@/stores/pdf-tts-store";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const PdfCanvas = lazy(() => import("@/components/pdf/PdfCanvas"));
+const DocumentSidebar = lazy(() => import("@/components/DocumentSidebar"));
+const ErrorCard = lazy(() => import("@/components/ErrorCard"));
 
 export default function Doc() {
   const params = useParams();
@@ -104,11 +106,32 @@ export default function Doc() {
   return (
     <div className="h-dvh bg-background md:flex">
       {/* Responsive Sidebar/Header */}
-      <DocumentSidebar docInfo={docInfo} />
+      <Suspense
+        fallback={
+          <div className="w-64 h-full bg-gray-100 dark:bg-gray-900 p-4">
+            <Skeleton className="h-8 w-3/4 mb-4" />
+            <Skeleton className="h-4 w-1/2 mb-2" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        }
+      >
+        <DocumentSidebar docInfo={docInfo} />
+      </Suspense>
 
       {/* PDF Viewer - takes full remaining space */}
       <main className="flex-1 overflow-hidden h-full">
-        <PdfCanvas />
+        <Suspense
+          fallback={
+            <div className="h-full w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+              <div className="text-center">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+                <p className="text-muted-foreground">Loading PDF...</p>
+              </div>
+            </div>
+          }
+        >
+          <PdfCanvas />
+        </Suspense>
       </main>
     </div>
   );
