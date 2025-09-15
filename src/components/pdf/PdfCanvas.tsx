@@ -7,6 +7,7 @@ import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
 import { usPdfUiStore } from "../../stores/pdf-ui-store";
 import { List } from "react-virtualized/dist/es/List";
 import useElementSize from "../../lib/useElementSize";
+import usePdfTextStore from "@/stores/pdf-text-store";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -15,6 +16,7 @@ const url = "/b-tree.pdf";
 export default function PdfCanvas() {
   const [pageCounts, setPageCounts] = useState<number[]>([]);
   const scale = usPdfUiStore((e) => e.scale);
+  const setPdf = usePdfTextStore((e) => e.setPdf);
   const pageHeight = usPdfUiStore((e) => e.height);
   const setPageHeight = usPdfUiStore((e) => e.setHeight);
   const ref = useRef<HTMLDivElement>(null);
@@ -22,6 +24,7 @@ export default function PdfCanvas() {
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = useCallback(
     async (pdf) => {
+      setPdf(pdf);
       const numPages = pdf.numPages;
       setPageCounts(Array.from({ length: numPages }, (_, i) => i + 1));
       // TODO: Find better way to get average page size
@@ -31,7 +34,7 @@ export default function PdfCanvas() {
         setPageHeight(viewport.height);
       }
     },
-    [setPageHeight],
+    [setPageHeight, setPdf],
   );
   return (
     <div className="flex  flex-col items-center justify-center bg-green-300 min-w-4/5 w-4/5">
