@@ -3,6 +3,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { useCallback, useState } from "react";
 import type { PageCallback } from "react-pdf/src/shared/types.js";
+import { usePdfScaleStore } from "./stores/pdf-scale-store";
 
 type Highlight = {
   x: number;
@@ -18,6 +19,7 @@ type PdfPageProps = {
 
 export default function PdfPage({ pageNumber }: PdfPageProps) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
+  const scale = usePdfScaleStore((e) => e.scale);
 
   const onPageLoadSuccess = useCallback(async (page: PageCallback) => {
     const textContent = await page.getTextContent();
@@ -50,10 +52,10 @@ export default function PdfPage({ pageNumber }: PdfPageProps) {
           key={idx}
           className="absolute bg-amber-100 hover:bg-amber-300 z-10 opacity-30 cursor-pointer"
           style={{
-            left: highlight.x * 2,
-            top: highlight.y * 2,
-            width: highlight.width * 2,
-            height: highlight.height * 2,
+            left: highlight.x * scale,
+            top: highlight.y * scale,
+            width: highlight.width * scale,
+            height: highlight.height * scale,
           }}
           title={highlight.text}
         />
