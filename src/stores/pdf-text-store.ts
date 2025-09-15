@@ -1,3 +1,5 @@
+import preloadTextParts from "@/lib/preloadTextParts";
+import type { pdfjs } from "react-pdf";
 import { create } from "zustand";
 
 export type TextPart = {
@@ -9,21 +11,39 @@ export type TextPart = {
 };
 
 type PdfTextStoreProp = {
+  pdf: pdfjs.PDFDocumentProxy | undefined;
+  setPdf: (pdf: pdfjs.PDFDocumentProxy) => void;
   store: Map<number, TextPart[]>;
   getPageTexts: (page: number) => TextPart[] | undefined;
   setPageTexts: (page: number, texts: TextPart[]) => void;
 };
 
 const usePdfTextStore = create<PdfTextStoreProp>((set, get) => ({
+  pdf: undefined,
+  setPdf: (pdf) => {
+    set({ pdf });
+  },
   store: new Map(),
   getPageTexts: (page) => {
     return get().store.get(page);
   },
   setPageTexts: (page, texts) => {
-    set((state) => ({
-      store: state.store.set(page, texts),
-    }));
+    set((store) => {
+      const newStore = new Map(store.store);
+      newStore.set(page, texts);
+      return {
+        store: newStore,
+      };
+    });
   },
 }));
+
+export function usePagePreloader() {
+  const setPageTexts = usePdfTextStore((state) => state.setPageTexts);
+  return async (page: number) => {
+    const texts = await preloadTextParts(usePdfTextStore.getState().pdf, page);
+    setPageTexts(page, texts);
+  };
+}
 
 export default usePdfTextStore;

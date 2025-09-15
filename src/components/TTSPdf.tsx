@@ -18,7 +18,7 @@ export default function TTSPdf() {
     const pageTexts = getPageText(1);
     if (!Array.isArray(pageTexts) || pageTexts.length === 0) return;
     const textChunks = chunk(pageTexts, 20);
-    textChunks.forEach((c) => {
+    textChunks.forEach((c, i) => {
       const utterance = new SpeechSynthesisUtterance(
         c.map((e) => e.text).join(" "),
       );

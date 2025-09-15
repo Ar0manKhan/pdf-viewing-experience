@@ -5,7 +5,7 @@ import { memo, useCallback, type CSSProperties } from "react";
 import type { PageCallback } from "react-pdf/src/shared/types.js";
 import { usPdfUiStore } from "../../stores/pdf-ui-store";
 import usePdfTextStore from "@/stores/pdf-text-store";
-import getTextParts from "@/lib/extractTextParts";
+import getTextParts from "@/lib/getTextParts";
 
 type PdfPageProps = {
   pageNumber: number;
@@ -33,7 +33,7 @@ const PdfPage = memo(function ({
         {highlights?.map((highlight, idx) => (
           <div
             key={idx}
-            className="absolute bg-amber-100 hover:bg-amber-300 z-10 opacity-30 cursor-pointer"
+            className="absolute hover:bg-amber-300 z-10 opacity-30 cursor-pointer"
             style={{
               left: highlight.x * scale,
               top: highlight.y * scale,
