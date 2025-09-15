@@ -7,7 +7,7 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { useEffect, useState, useCallback } from "react";
-import { getDocs, deleteDoc } from "@/lib/indexedDb/docStore";
+import { getDocs, deleteDoc, type Doc } from "@/lib/indexedDb/docStore";
 import { FileText, Trash } from "lucide-react";
 import { UploadDialog } from "@/components/UploadDialog";
 
@@ -41,10 +41,11 @@ export default function App() {
 interface DocumentCardProps {
   id: string;
   name: string;
+  lastPlayed: Doc["lastPlayed"];
   onDelete: (id: string) => void;
 }
 
-function DocumentCard({ id, name, onDelete }: DocumentCardProps) {
+function DocumentCard({ id, name, lastPlayed, onDelete }: DocumentCardProps) {
   return (
     <div className="relative">
       <Link to={`/doc/${id}`} className="block">
@@ -58,6 +59,11 @@ function DocumentCard({ id, name, onDelete }: DocumentCardProps) {
             <CardTitle className="text-sm font-medium line-clamp-2">
               {name}
             </CardTitle>
+            {lastPlayed && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Last Page: {lastPlayed.page}
+              </p>
+            )}
           </CardContent>
         </Card>
       </Link>
@@ -78,11 +84,19 @@ function DocumentCard({ id, name, onDelete }: DocumentCardProps) {
 }
 
 function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
-  const [files, setFiles] = useState<{ name: string; id: string }[]>([]);
+  const [files, setFiles] = useState<
+    {
+      name: string;
+      id: string;
+      lastPlayed: Doc["lastPlayed"];
+    }[]
+  >([]);
 
   const loadFiles = useCallback(async () => {
     const docs = await getDocs();
-    setFiles(docs.map((e) => ({ name: e.name, id: e.id })));
+    setFiles(
+      docs.map((e) => ({ name: e.name, id: e.id, lastPlayed: e.lastPlayed }))
+    );
   }, []);
 
   const handleDelete = useCallback(
@@ -113,6 +127,7 @@ function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
               key={file.id}
               id={file.id}
               name={file.name}
+              lastPlayed={file.lastPlayed}
               onDelete={handleDelete}
             />
           ))}

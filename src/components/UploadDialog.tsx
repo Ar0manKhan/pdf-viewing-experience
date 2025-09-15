@@ -39,6 +39,7 @@ export function UploadDialog({ onUploadSuccess }: UploadDialogProps) {
           // saving to indexeddb
           const dbObj: Doc = {
             createdAt: Date.now(),
+            lastPlayed: null,
             name: file.name,
             size: file.size,
             type: file.type,
