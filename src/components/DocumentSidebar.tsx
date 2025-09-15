@@ -58,7 +58,7 @@ export function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
               <SheetHeader>
                 <SheetTitle>Document Controls</SheetTitle>
               </SheetHeader>
-              <div className="mt-6">
+              <div className="mt-6 px-4 pb-4">
                 <ControlsContent />
               </div>
             </SheetContent>
