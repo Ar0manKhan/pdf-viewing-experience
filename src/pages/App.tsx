@@ -1,7 +1,14 @@
 import { Link } from "react-router";
 import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { useEffect, useState } from "react";
 import { getDocs } from "@/lib/indexedDb/docStore";
+import { FileText } from "lucide-react";
 
 export default function App() {
   return (
@@ -23,6 +30,30 @@ export default function App() {
   );
 }
 
+interface DocumentCardProps {
+  id: string;
+  name: string;
+}
+
+function DocumentCard({ id, name }: DocumentCardProps) {
+  return (
+    <Link to={`/doc/${id}`} className="block">
+      <Card className="hover:shadow-md transition-shadow cursor-pointer">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-center h-24 bg-muted/50 rounded-lg">
+            <FileText className="h-8 w-8 text-muted-foreground" />
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <CardTitle className="text-sm font-medium line-clamp-2">
+            {name}
+          </CardTitle>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
 function SavedFiles() {
   const [files, setFiles] = useState<{ name: string; id: string }[]>([]);
   useEffect(() => {
@@ -31,15 +62,21 @@ function SavedFiles() {
     });
   }, []);
   return (
-    <section className="mt-4">
-      <h1 className="text-2xl font-bold">Saved files</h1>
-      <div className="mt-2">
-        {files.map((e) => (
-          <div key={e.id} className="flex gap-2">
-            <Link to={`/doc/${e.id}`}>{e.name}</Link>
-          </div>
-        ))}
-      </div>
+    <section>
+      <h1 className="text-2xl font-bold mb-6">Saved files</h1>
+      {files.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <FileText className="mx-auto h-12 w-12 mb-4 opacity-50" />
+          <p>No saved files yet</p>
+          <p className="text-sm">Upload a PDF to get started</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {files.map((file) => (
+            <DocumentCard key={file.id} id={file.id} name={file.name} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

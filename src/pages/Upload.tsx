@@ -41,7 +41,7 @@ export default function Upload() {
   return (
     <Dropzone
       accept={{ "application/pdf": [] }}
-      maxFiles={1}
+      maxFiles={100}
       maxSize={1024 * 1024 * 200}
       onDrop={handleDrop}
       onError={console.error}
