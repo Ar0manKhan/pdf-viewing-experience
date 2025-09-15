@@ -22,6 +22,7 @@ const PdfPage = memo(function ({
   const ttsPosition = useTTSStore((e) => e.position);
   const playPdf = usePlayPdf();
   const setHighlights = usePdfTextStore((e) => e.setPageTexts);
+  const pdfIsPlaying = useTTSStore((e) => e.isPlaying);
   const onPageLoadSuccess = useCallback(
     async (page: PageCallback) => {
       if (Array.isArray(highlights)) return;
@@ -41,7 +42,8 @@ const PdfPage = memo(function ({
             highlight={
               ttsPage === pageNumber &&
               idx >= ttsPosition.start &&
-              idx < ttsPosition.end
+              idx < ttsPosition.end &&
+              pdfIsPlaying
             }
             idx={idx}
             pageNum={pageNumber}

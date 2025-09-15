@@ -10,7 +10,7 @@ import {
 import { ArrowLeft, Menu } from "lucide-react";
 import { DocumentInfo } from "./DocumentInfo";
 import PageScale from "./pdf/PageScale";
-import TTSPdf from "./TTSPdf";
+import TTSPdf from "./TtsControls";
 
 interface DocumentSidebarProps {
   docInfo: {

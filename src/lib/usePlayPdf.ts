@@ -12,6 +12,7 @@ export default function usePlayPdf() {
   const pdf = usePdfTextStore((e) => e.pdf);
   const totalPageCount = useMemo(() => pdf?.numPages ?? 0, [pdf]);
   const voice = useTTSStore((e) => e.voice);
+  const setPlaying = useTTSStore((e) => e.setPlaying);
 
   const playChunk = useCallback(
     async function (pageNum: number, chunkIndex: number, position: number) {
@@ -56,6 +57,7 @@ export default function usePlayPdf() {
         const currentStartPosition = position + chunkIndex * CHUNK_SIZE;
         const currentEndPosition = position + (chunkIndex + 1) * CHUNK_SIZE;
         setPosition(pageNum, currentStartPosition, currentEndPosition);
+        setPlaying(true);
 
         // Queue the next chunk when current chunk starts
         setTimeout(() => {
@@ -64,12 +66,12 @@ export default function usePlayPdf() {
       });
 
       utterance.addEventListener("end", () => {
-        setPosition(0, 0, 0);
+        setPlaying(false);
       });
 
       window.speechSynthesis.speak(utterance);
     },
-    [getPageText, pdf, setPosition, totalPageCount, voice],
+    [getPageText, pdf, setPlaying, setPosition, totalPageCount, voice],
   );
 
   const playPdf = useCallback(
