@@ -14,7 +14,7 @@ import getMajorityHeight from "@/lib/getMajorityHeight";
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export default function PdfCanvas() {
-  const [pageCounts, setPageCounts] = useState<number[]>([]);
+  const [pageCount, setPageCount] = useState(0);
   const { debouncedScale } = useDebouncedScale();
   const setPdf = usePdfTextStore((e) => e.setPdf);
   const pageHeight = usPdfUiStore((e) => e.height);
@@ -26,7 +26,7 @@ export default function PdfCanvas() {
     async (pdf) => {
       setPdf(pdf);
       const numPages = pdf.numPages;
-      setPageCounts(Array.from({ length: numPages }, (_, i) => i + 1));
+      setPageCount(numPages);
       if (numPages > 0) {
         setPageHeight(await getMajorityHeight(pdf));
       }
@@ -49,10 +49,10 @@ export default function PdfCanvas() {
             height={size?.height || 0}
             width={size?.width || 0}
             rowHeight={pageHeight * debouncedScale}
-            rowCount={pageCounts.length}
+            rowCount={pageCount}
             overscanRowCount={1}
             rowRenderer={({ index, style, key }) => (
-              <PdfPage key={key} pageNumber={pageCounts[index]} style={style} />
+              <PdfPage key={key} pageNumber={index + 1} style={style} />
             )}
           />
         </Document>
