@@ -8,6 +8,7 @@ import { usPdfUiStore } from "../../stores/pdf-ui-store";
 import { List } from "react-virtualized/dist/es/List";
 import useElementSize from "../../lib/useElementSize";
 import usePdfTextStore from "@/stores/pdf-text-store";
+import { useDebouncedScale } from "@/hooks/useDebouncedScale";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -15,7 +16,7 @@ const url = "/b-tree.pdf";
 
 export default function PdfCanvas() {
   const [pageCounts, setPageCounts] = useState<number[]>([]);
-  const scale = usPdfUiStore((e) => e.scale);
+  const { debouncedScale } = useDebouncedScale();
   const setPdf = usePdfTextStore((e) => e.setPdf);
   const pageHeight = usPdfUiStore((e) => e.height);
   const setPageHeight = usPdfUiStore((e) => e.setHeight);
@@ -45,12 +46,12 @@ export default function PdfCanvas() {
         <Document
           file={url}
           onLoadSuccess={onDocumentLoadSuccess}
-          scale={scale}
+          scale={debouncedScale}
         >
           <List
             height={size?.height || 0}
             width={size?.width || 0}
-            rowHeight={pageHeight * scale}
+            rowHeight={pageHeight * debouncedScale}
             rowCount={pageCounts.length}
             overscanRowCount={1}
             rowRenderer={({ index, style, key }) => (
