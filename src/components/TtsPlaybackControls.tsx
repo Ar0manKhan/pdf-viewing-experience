@@ -15,7 +15,7 @@ function TtsPlaybackControls() {
   const playPdf = usePlayPdf();
 
   const handleCancel = useCallback(() => {
-    window.speechSynthesis.cancel();
+    window.speechSynthesis.pause();
     setPlaying(false);
   }, [setPlaying]);
 
@@ -57,11 +57,7 @@ function TtsPlaybackControls() {
       )}
 
       {!isPlaying && (currentPage > 1 || currentPosition.start > 0) && (
-        <Button
-          onClick={resetPosition}
-          variant="outline"
-          className="w-full"
-        >
+        <Button onClick={resetPosition} variant="outline" className="w-full">
           <DynamicIcon name="rotate-ccw" className="h-4 w-4 mr-2" />
           Reset
         </Button>

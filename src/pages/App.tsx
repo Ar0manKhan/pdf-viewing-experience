@@ -31,9 +31,47 @@ export default function App() {
           </div>
         </div>
       </header>
-      <main className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6">
+        <FirefoxWarning />
         <SavedFiles refreshTrigger={refreshTrigger} />
-      </main>
+      </div>
+    </div>
+  );
+}
+
+function FirefoxWarning() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (navigator.userAgent.indexOf("Firefox") > -1) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  if (!isVisible) {
+    return null;
+  }
+
+  return (
+    <div
+      className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 relative rounded-md mb-4"
+      role="alert"
+    >
+      <div className="flex">
+        <div className="py-1">
+          <DynamicIcon name="alert-triangle" className="h-6 w-6 mr-4" />
+        </div>
+        <div>
+          <p className="font-bold">Firefox Users</p>
+          <p>Your browser might behave weirdly. We are working on fixing it.</p>
+        </div>
+        <button
+          className="absolute top-0 bottom-0 right-0 px-4 py-3"
+          onClick={() => setIsVisible(false)}
+        >
+          <DynamicIcon name="x" className="h-6 w-6" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -98,7 +136,7 @@ function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
   const loadFiles = useCallback(async () => {
     const docs = await getDocs();
     setFiles(
-      docs.map((e) => ({ name: e.name, id: e.id, lastPlayed: e.lastPlayed }))
+      docs.map((e) => ({ name: e.name, id: e.id, lastPlayed: e.lastPlayed })),
     );
   }, []);
 
@@ -107,7 +145,7 @@ function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
       await deleteDoc(id);
       loadFiles();
     },
-    [loadFiles]
+    [loadFiles],
   );
 
   useEffect(() => {

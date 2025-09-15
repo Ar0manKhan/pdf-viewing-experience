@@ -21,7 +21,11 @@ import usePdfVirtualizedStore from "@/stores/pdf-virtualized-store";
 import useTTSStore from "@/stores/pdf-tts-store";
 import { usePdfUiStore } from "@/stores/pdf-ui-store";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+if (import.meta.env.PROD) {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+} else {
+  pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
+}
 
 export default function PdfCanvas() {
   const [pageCount, setPageCount] = useState(0);
