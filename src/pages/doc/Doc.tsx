@@ -81,7 +81,7 @@ export default function Doc() {
   }
 
   return (
-    <div className="min-h-screen bg-background md:flex">
+    <div className="h-dvh bg-background md:flex">
       {/* Responsive Sidebar/Header */}
       <DocumentSidebar docInfo={docInfo} />
 
