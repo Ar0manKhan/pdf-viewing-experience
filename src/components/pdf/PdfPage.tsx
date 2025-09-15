@@ -32,6 +32,8 @@ const PdfPage = memo(function ({ pageNumber }: PdfPageProps) {
     },
     [],
   );
+  // scrolls to specific position in a page where the text is highlighted/being read
+  // only if follow mode is on.
   useEffect(() => {
     if (
       pageNumber === ttsPage &&

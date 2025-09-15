@@ -6,7 +6,7 @@ import chunk from "lodash-es/chunk";
 import { useCallback, useEffect, useMemo } from "react";
 import { setDoc } from "./indexedDb/docStore";
 
-const CHUNK_SIZE = 5;
+const CHUNK_SIZE = 50000;
 
 export default function usePlayPdf() {
   const setPosition = useTTSStore((e) => e.setPosition);
