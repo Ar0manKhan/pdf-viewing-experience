@@ -9,6 +9,7 @@ import { List } from "react-virtualized/dist/es/List";
 import useElementSize from "../../lib/useElementSize";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import { useDebouncedScale } from "@/hooks/useDebouncedScale";
+import getMajorityHeight from "@/lib/getMajorityHeight";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -26,14 +27,11 @@ export default function PdfCanvas() {
       setPdf(pdf);
       const numPages = pdf.numPages;
       setPageCounts(Array.from({ length: numPages }, (_, i) => i + 1));
-      // TODO: Find better way to get average page size
       if (numPages > 0) {
-        const page = await pdf.getPage(1);
-        const viewport = page.getViewport({ scale: 1 });
-        setPageHeight(viewport.height);
+        setPageHeight(await getMajorityHeight(pdf));
       }
     },
-    [setPageHeight, setPdf]
+    [setPageHeight, setPdf],
   );
   const pdfBlob = usePdfTextStore((e) => e.pdfBlob);
   return (

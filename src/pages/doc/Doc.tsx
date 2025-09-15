@@ -56,7 +56,7 @@ export default function Doc() {
       cleanTextStore();
       cleanTTSStore();
     };
-  }, [params, setPdfBlob]);
+  }, [cleanTTSStore, cleanTextStore, params, setPdfBlob]);
 
   if (isLoading) {
     return (
@@ -86,7 +86,7 @@ export default function Doc() {
       <DocumentSidebar docInfo={docInfo} />
 
       {/* PDF Viewer - takes full remaining space */}
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden h-full">
         <PdfCanvas />
       </main>
     </div>
