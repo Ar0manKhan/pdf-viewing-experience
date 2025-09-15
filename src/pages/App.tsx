@@ -8,7 +8,7 @@ import {
 import { Button } from "../components/ui/button";
 import { useEffect, useState, useCallback } from "react";
 import { getDocs, deleteDoc, type Doc } from "@/lib/indexedDb/docStore";
-import { FileText, Trash } from "lucide-react";
+import { DynamicIcon } from "lucide-react/dynamic";
 import { UploadDialog } from "@/components/UploadDialog";
 
 export default function App() {
@@ -52,7 +52,10 @@ function DocumentCard({ id, name, lastPlayed, onDelete }: DocumentCardProps) {
         <Card className="hover:shadow-md transition-shadow cursor-pointer">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-center h-24 bg-muted/50 rounded-lg">
-              <FileText className="h-8 w-8 text-muted-foreground" />
+              <DynamicIcon
+                name="file-text"
+                className="h-8 w-8 text-muted-foreground"
+              />
             </div>
           </CardHeader>
           <CardContent className="pt-0">
@@ -77,7 +80,7 @@ function DocumentCard({ id, name, lastPlayed, onDelete }: DocumentCardProps) {
           onDelete(id);
         }}
       >
-        <Trash className="h-4 w-4" />
+        <DynamicIcon name="trash" className="h-4 w-4" />
       </Button>
     </div>
   );
@@ -116,7 +119,10 @@ function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
       <h1 className="text-2xl font-bold mb-6">Saved files</h1>
       {files.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          <FileText className="mx-auto h-12 w-12 mb-4 opacity-50" />
+          <DynamicIcon
+            name="file-text"
+            className="mx-auto h-12 w-12 mb-4 opacity-50"
+          />
           <p>No saved files yet</p>
           <p className="text-sm">Upload a PDF to get started</p>
         </div>

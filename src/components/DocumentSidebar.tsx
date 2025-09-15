@@ -7,7 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { ArrowLeft, Menu } from "lucide-react";
+import { DynamicIcon } from "lucide-react/dynamic";
 import { Suspense, lazy } from "react";
 import { Skeleton } from "./ui/skeleton";
 
@@ -49,7 +49,7 @@ export default function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
           <div className="flex items-center gap-4">
             <Link to="/">
               <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
+                <DynamicIcon name="arrow-left" className="h-4 w-4 mr-2" />
                 Back
               </Button>
             </Link>
@@ -58,7 +58,7 @@ export default function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm">
-                <Menu className="h-4 w-4" />
+                <DynamicIcon name="menu" className="h-4 w-4" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80">
@@ -92,7 +92,7 @@ export default function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
           <div className="flex items-center gap-4">
             <Link to="/">
               <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
+                <DynamicIcon name="arrow-left" className="h-4 w-4 mr-2" />
                 Back
               </Button>
             </Link>

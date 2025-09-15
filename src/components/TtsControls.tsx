@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Card, CardContent } from "./ui/card";
-import { Play, RotateCcw, Square, Volume2 } from "lucide-react";
+import { DynamicIcon } from "lucide-react/dynamic";
 import useTTSStore from "@/stores/pdf-tts-store";
 import usePlayPdf from "@/lib/usePlayPdf";
 import ModeToggle from "./ModeToggle";
@@ -91,7 +91,7 @@ export default function TtsControls() {
               className="w-full"
               disabled={!currentVoice}
             >
-              <Play className="h-4 w-4 mr-2" />
+              <DynamicIcon name="play" className="h-4 w-4 mr-2" />
               Start Reading
             </Button>
           )}
@@ -102,7 +102,7 @@ export default function TtsControls() {
               className="w-full"
               disabled={!currentVoice}
             >
-              <Play className="h-4 w-4 mr-2" />
+              <DynamicIcon name="play" className="h-4 w-4 mr-2" />
               Resume Reading
             </Button>
           )}
@@ -115,7 +115,7 @@ export default function TtsControls() {
 
           {isPlaying && (
             <Button onClick={handleCancel} variant="outline" className="w-full">
-              <Square className="h-4 w-4 mr-2" />
+              <DynamicIcon name="square" className="h-4 w-4 mr-2" />
               Stop Reading
             </Button>
           )}
@@ -126,7 +126,7 @@ export default function TtsControls() {
               variant="outline"
               className="w-full"
             >
-              <RotateCcw className="h-4 w-4 mr-2" />
+              <DynamicIcon name="rotate-ccw" className="h-4 w-4 mr-2" />
               Reset
             </Button>
           )}
@@ -134,7 +134,7 @@ export default function TtsControls() {
 
         {/* Status Indicator */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Volume2 className="h-3 w-3" />
+          <DynamicIcon name="volume-2" className="h-3 w-3" />
           <span>Ready to read</span>
         </div>
       </CardContent>

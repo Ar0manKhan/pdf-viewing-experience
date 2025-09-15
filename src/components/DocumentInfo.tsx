@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { DynamicIcon } from "lucide-react/dynamic";
 
 interface DocumentInfoProps {
   name: string;
@@ -22,7 +22,10 @@ export default function DocumentInfo({
 
   return (
     <div className="flex items-center gap-2">
-      <FileText className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+      <DynamicIcon
+        name="file-text"
+        className="h-5 w-5 text-muted-foreground flex-shrink-0"
+      />
       <div className="min-w-0 flex-1">
         <h1 className="font-semibold text-foreground truncate">{name}</h1>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
