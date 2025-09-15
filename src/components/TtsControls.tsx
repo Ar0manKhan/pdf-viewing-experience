@@ -12,6 +12,7 @@ import { DynamicIcon } from "lucide-react/dynamic";
 import useTTSStore from "@/stores/pdf-tts-store";
 import usePlayPdf from "@/lib/usePlayPdf";
 import ModeToggle from "./ModeToggle";
+import FollowModeToggle from "./FollowModeToggle";
 
 export default function TtsControls() {
   const currentPage = useTTSStore((e) => e.page);
@@ -51,7 +52,7 @@ export default function TtsControls() {
       const voice = voices.find((voice) => voice.name === value);
       if (voice) setVoice(voice);
     },
-    [setVoice, voices]
+    [setVoice, voices],
   );
 
   return (
@@ -81,6 +82,12 @@ export default function TtsControls() {
         <div className="space-y-2">
           <label className="text-sm font-medium">Reading Mode</label>
           <ModeToggle />
+        </div>
+
+        {/* Follow Mode */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Scroll Behavior</label>
+          <FollowModeToggle />
         </div>
 
         {/* Playback Controls */}

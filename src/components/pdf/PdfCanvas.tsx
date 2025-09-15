@@ -1,9 +1,15 @@
 import { pdfjs, Document } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
-import { Suspense, useCallback, useRef, useState, type RefObject } from "react";
+import {
+  Suspense,
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
-import { usePdfUiStore } from "../../stores/pdf-ui-store";
 import useElementSize from "../../lib/useElementSize";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import { useDebouncedScale } from "@/hooks/useDebouncedScale";
@@ -11,6 +17,9 @@ import getMajorityHeight from "@/lib/getMajorityHeight";
 import { Skeleton } from "../ui/skeleton";
 import List from "react-virtualized/dist/es/List";
 import PdfPage from "./PdfPage";
+import usePdfVirtualizedStore from "@/stores/pdf-virtualized-store";
+import useTTSStore from "@/stores/pdf-tts-store";
+import { usePdfUiStore } from "@/stores/pdf-ui-store";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
@@ -18,10 +27,26 @@ export default function PdfCanvas() {
   const [pageCount, setPageCount] = useState(0);
   const { debouncedScale } = useDebouncedScale();
   const setPdf = usePdfTextStore((e) => e.setPdf);
-  const pageHeight = usePdfUiStore((e) => e.height);
-  const setPageHeight = usePdfUiStore((e) => e.setHeight);
+  const pageHeight = usePdfVirtualizedStore((e) => e.height);
+  const setPageHeight = usePdfVirtualizedStore((e) => e.setHeight);
   const ref = useRef<HTMLDivElement>(null);
   const size = useElementSize(ref as RefObject<HTMLDivElement>);
+  const setRenderedRows = usePdfVirtualizedStore((e) => e.setRenderedRows);
+  const renderedRows = usePdfVirtualizedStore((e) => e.renderedRows);
+  const pdfPage = useTTSStore((e) => e.page);
+  const followMode = usePdfUiStore((e) => e.followMode);
+  const scrollIndex = useMemo(() => {
+    if (!followMode) return undefined;
+    const targetPage = pdfPage - 1;
+    if (targetPage < 0) return undefined;
+    if (!renderedRows) return undefined;
+    if (
+      targetPage >= renderedRows.overscanStartIndex &&
+      targetPage <= renderedRows.overscanStopIndex
+    )
+      return undefined;
+    return targetPage;
+  }, [followMode, pdfPage, renderedRows]);
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = useCallback(
     async (pdf) => {
@@ -53,6 +78,8 @@ export default function PdfCanvas() {
               rowHeight={pageHeight * debouncedScale}
               rowCount={pageCount}
               overscanRowCount={1}
+              scrollToIndex={scrollIndex}
+              onRowsRendered={setRenderedRows}
               rowRenderer={({ index, style, key }) => (
                 <div style={style} key={key}>
                   <PdfPage key={key} pageNumber={index + 1} />

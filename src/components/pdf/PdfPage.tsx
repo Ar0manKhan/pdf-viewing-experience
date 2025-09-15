@@ -22,6 +22,7 @@ const PdfPage = memo(function ({ pageNumber }: PdfPageProps) {
   const pdfIsPlaying = useTTSStore((e) => e.isPlaying);
   const mode = usePdfUiStore((e) => e.mode);
   const highlightsContainerRef = useRef<HTMLDivElement>(null);
+  const followMode = usePdfUiStore((e) => e.followMode);
   const getHighlight = useCallback(
     (idx: number): HTMLDivElement | null | undefined => {
       if (!highlightsContainerRef.current) return null;
@@ -29,11 +30,16 @@ const PdfPage = memo(function ({ pageNumber }: PdfPageProps) {
         | HTMLDivElement
         | undefined;
     },
-    []
+    [],
   );
-
   useEffect(() => {
-    if (pageNumber === ttsPage && ttsPosition.start >= 0) {
+    if (
+      pageNumber === ttsPage &&
+      ttsPosition.start >= 0 &&
+      highlights &&
+      pdfIsPlaying
+    ) {
+      if (!followMode) return;
       const highlightElement = getHighlight(ttsPosition.start);
       if (highlightElement) {
         highlightElement.scrollIntoView({
@@ -42,15 +48,22 @@ const PdfPage = memo(function ({ pageNumber }: PdfPageProps) {
         });
       }
     }
-  }, [ttsPage, ttsPosition.start, pageNumber, getHighlight]);
-
+  }, [
+    ttsPage,
+    ttsPosition.start,
+    pageNumber,
+    getHighlight,
+    highlights,
+    pdfIsPlaying,
+    followMode,
+  ]);
   const onPageLoadSuccess = useCallback(
     async (page: PageCallback) => {
       if (Array.isArray(highlights)) return;
       const newHighlights = await getTextParts(page);
       setHighlights(pageNumber, newHighlights);
     },
-    [highlights, pageNumber, setHighlights]
+    [highlights, pageNumber, setHighlights],
   );
   return (
     <div className="relative">
@@ -94,7 +107,7 @@ const Highlight = memo(function Highlight({
   const scale = usePdfUiStore((e) => e.scale);
   const clickFn = useCallback(
     () => playPdf(pageNum, idx),
-    [idx, pageNum, playPdf]
+    [idx, pageNum, playPdf],
   );
   return (
     <div
