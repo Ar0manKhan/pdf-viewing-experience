@@ -8,7 +8,7 @@ import {
 import { useEffect, useState, useCallback } from "react";
 import { getDocs } from "@/lib/indexedDb/docStore";
 import { FileText } from "lucide-react";
-import { UploadDialog } from "../components/UploadDialog";
+import { UploadDialog } from "@/components/UploadDialog";
 
 export default function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
