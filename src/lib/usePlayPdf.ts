@@ -5,6 +5,7 @@ import chunk from "lodash-es/chunk";
 import { useCallback, useMemo } from "react";
 
 const CHUNK_SIZE = 50;
+
 export default function usePlayPdf() {
   const setPosition = useTTSStore((e) => e.setPosition);
   const getPageText = usePdfTextStore((e) => e.getPageTexts);
@@ -12,46 +13,72 @@ export default function usePlayPdf() {
   const totalPageCount = useMemo(() => pdf?.numPages ?? 0, [pdf]);
   const voice = useTTSStore((e) => e.voice);
 
-  const playPdf = useCallback(
-    async function (pageNum: number, position: number) {
-      window.speechSynthesis.cancel();
+  const playChunk = useCallback(
+    async function (pageNum: number, chunkIndex: number, position: number) {
       if (!voice) return;
       if (pageNum > totalPageCount) return;
+
       let pageTexts = getPageText(pageNum);
       if (!pageTexts) {
         const newParts = await preloadTextParts(pdf, pageNum);
-        // TODO: Handle more carefully, there would be a case when a page does not
-        // have text, but the next page does.
         if (!newParts) return;
         pageTexts = newParts;
       }
+
+      const textChunks = chunk(pageTexts.slice(position), CHUNK_SIZE);
+
+      // If no more chunks in current page, try next page
+      if (chunkIndex >= textChunks.length) {
+        playChunk(pageNum + 1, 0, 0);
+        return;
+      }
+
+      const currentChunk = textChunks[chunkIndex];
+      const text = currentChunk
+        .map((e) => e.text.trim())
+        .filter(Boolean)
+        .join(" ");
+
+      if (!text) {
+        // If current chunk is empty, move to next chunk
+        playChunk(pageNum, chunkIndex + 1, position);
+        return;
+      }
+
       const rate = 1;
       const pitch = 1;
-      const textChunks = chunk(pageTexts.slice(position), CHUNK_SIZE);
-      textChunks.forEach((c, i) => {
-        const text = c
-          .map((e) => e.text.trim())
-          .filter(Boolean)
-          .join(" ");
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = voice;
-        utterance.pitch = pitch;
-        utterance.rate = rate;
-        utterance.addEventListener("start", () => {
-          const currentEndPosition = position + (i + 1) * CHUNK_SIZE;
-          setPosition(pageNum, position + i * CHUNK_SIZE, currentEndPosition);
-        });
-        utterance.addEventListener("end", () => {
-          setPosition(0, 0, 0);
-          // if this is the last chunk, load next page and play
-          if (i === textChunks.length - 1) {
-            playPdf(pageNum + 1, 0);
-          }
-        });
-        window.speechSynthesis.speak(utterance);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.voice = voice;
+      utterance.pitch = pitch;
+      utterance.rate = rate;
+
+      utterance.addEventListener("start", () => {
+        const currentStartPosition = position + chunkIndex * CHUNK_SIZE;
+        const currentEndPosition = position + (chunkIndex + 1) * CHUNK_SIZE;
+        setPosition(pageNum, currentStartPosition, currentEndPosition);
+
+        // Queue the next chunk when current chunk starts
+        setTimeout(() => {
+          playChunk(pageNum, chunkIndex + 1, position);
+        }, 0);
       });
+
+      utterance.addEventListener("end", () => {
+        setPosition(0, 0, 0);
+      });
+
+      window.speechSynthesis.speak(utterance);
     },
     [getPageText, pdf, setPosition, totalPageCount, voice],
   );
+
+  const playPdf = useCallback(
+    async function (pageNum: number, position: number) {
+      window.speechSynthesis.cancel();
+      playChunk(pageNum, 0, position);
+    },
+    [playChunk],
+  );
+
   return playPdf;
 }
