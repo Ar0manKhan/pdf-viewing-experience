@@ -3,7 +3,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { useCallback, useState, type CSSProperties } from "react";
 import type { PageCallback } from "react-pdf/src/shared/types.js";
-import { usPdfUiStore } from "./stores/pdf-ui-store";
+import { usPdfUiStore } from "../../stores/pdf-ui-store";
 
 type Highlight = {
   x: number;
