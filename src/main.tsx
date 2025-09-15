@@ -1,20 +1,21 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import App from "./pages/App";
-import Doc from "./pages/Doc";
-import { StrictMode } from "react";
-import Upload from "./pages/Upload";
-import Component from "./pages";
+import { lazy, StrictMode } from "react";
+
+const HomeOutlet = lazy(() => import("./pages/outlet"));
+const Homepage = lazy(() => import("./pages/App"));
+const Upload = lazy(() => import("./pages/Upload"));
+const Doc = lazy(() => import("./pages/Doc"));
 
 const router = createBrowserRouter([
   {
     path: "",
-    Component: Component,
+    Component: HomeOutlet,
     children: [
       {
         path: "/",
-        Component: App,
+        Component: Homepage,
       },
       {
         path: "/upload",
