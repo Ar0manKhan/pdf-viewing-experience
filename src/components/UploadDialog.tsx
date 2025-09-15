@@ -29,7 +29,10 @@ export function UploadDialog({ onUploadSuccess }: UploadDialogProps) {
         const tasks = files.map(async (file) => {
           // generating hash
           const fileBuffer = await file.arrayBuffer();
-          const hashBuffer = await crypto.subtle.digest("SHA-1", fileBuffer);
+          const hashBuffer = await window.crypto.subtle.digest(
+            "SHA-1",
+            fileBuffer
+          );
           const hashHex = Array.from(new Uint8Array(hashBuffer))
             .map((b) => b.toString(16).padStart(2, "0"))
             .join("");

@@ -5,9 +5,10 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { useEffect, useState, useCallback } from "react";
-import { getDocs } from "@/lib/indexedDb/docStore";
-import { FileText } from "lucide-react";
+import { getDocs, deleteDoc } from "@/lib/indexedDb/docStore";
+import { FileText, Trash } from "lucide-react";
 import { UploadDialog } from "@/components/UploadDialog";
 
 export default function App() {
@@ -22,7 +23,10 @@ export default function App() {
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground">Pdf Reader</h1>
+            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <img src="/logo.webp" alt="Logo" className="h-8 w-8" />
+              Pdf Reader
+            </h1>
             <UploadDialog onUploadSuccess={handleUploadSuccess} />
           </div>
         </div>
@@ -37,24 +41,39 @@ export default function App() {
 interface DocumentCardProps {
   id: string;
   name: string;
+  onDelete: (id: string) => void;
 }
 
-function DocumentCard({ id, name }: DocumentCardProps) {
+function DocumentCard({ id, name, onDelete }: DocumentCardProps) {
   return (
-    <Link to={`/doc/${id}`} className="block">
-      <Card className="hover:shadow-md transition-shadow cursor-pointer">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-center h-24 bg-muted/50 rounded-lg">
-            <FileText className="h-8 w-8 text-muted-foreground" />
-          </div>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <CardTitle className="text-sm font-medium line-clamp-2">
-            {name}
-          </CardTitle>
-        </CardContent>
-      </Card>
-    </Link>
+    <div className="relative">
+      <Link to={`/doc/${id}`} className="block">
+        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-center h-24 bg-muted/50 rounded-lg">
+              <FileText className="h-8 w-8 text-muted-foreground" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <CardTitle className="text-sm font-medium line-clamp-2">
+              {name}
+            </CardTitle>
+          </CardContent>
+        </Card>
+      </Link>
+      <Button
+        variant="destructive"
+        size="sm"
+        className="absolute top-2 right-2 h-8 w-8 p-0"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onDelete(id);
+        }}
+      >
+        <Trash className="h-4 w-4" />
+      </Button>
+    </div>
   );
 }
 
@@ -65,6 +84,14 @@ function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
     const docs = await getDocs();
     setFiles(docs.map((e) => ({ name: e.name, id: e.id })));
   }, []);
+
+  const handleDelete = useCallback(
+    async (id: string) => {
+      await deleteDoc(id);
+      loadFiles();
+    },
+    [loadFiles]
+  );
 
   useEffect(() => {
     loadFiles();
@@ -82,7 +109,12 @@ function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {files.map((file) => (
-            <DocumentCard key={file.id} id={file.id} name={file.name} />
+            <DocumentCard
+              key={file.id}
+              id={file.id}
+              name={file.name}
+              onDelete={handleDelete}
+            />
           ))}
         </div>
       )}

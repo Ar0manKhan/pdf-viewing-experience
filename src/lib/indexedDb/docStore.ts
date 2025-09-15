@@ -34,7 +34,7 @@ async function getDocs() {
   return (await store.getAll()) as Doc[];
 }
 
-async function deleteDoc(id: number) {
+async function deleteDoc(id: string) {
   const tx = (await db).transaction(Stores.Docs, "readwrite");
   const store = tx.objectStore(Stores.Docs);
   return await store.delete(id);
