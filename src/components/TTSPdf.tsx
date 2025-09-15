@@ -37,7 +37,7 @@ export default function TTSPdf() {
   );
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-60">
       <select onChange={handleVoiceChange} value={currentVoice?.name}>
         <option value="">Select a voice</option>
         {voices.map((voice) => (
