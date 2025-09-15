@@ -1,30 +1,34 @@
 import { Link } from "react-router";
-import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getDocs } from "@/lib/indexedDb/docStore";
 import { FileText } from "lucide-react";
+import { UploadDialog } from "../components/UploadDialog";
 
 export default function App() {
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleUploadSuccess = () => {
+    setRefreshTrigger((prev) => prev + 1);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-foreground">Pdf Reader</h1>
-            <Link to="/upload">
-              <Button>Upload PDF</Button>
-            </Link>
+            <UploadDialog onUploadSuccess={handleUploadSuccess} />
           </div>
         </div>
       </header>
       <main className="container mx-auto px-4 py-6">
-        <SavedFiles />
+        <SavedFiles refreshTrigger={refreshTrigger} />
       </main>
     </div>
   );
@@ -54,13 +58,18 @@ function DocumentCard({ id, name }: DocumentCardProps) {
   );
 }
 
-function SavedFiles() {
+function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
   const [files, setFiles] = useState<{ name: string; id: string }[]>([]);
-  useEffect(() => {
-    getDocs().then((docs) => {
-      setFiles(docs.map((e) => ({ name: e.name, id: e.id })));
-    });
+
+  const loadFiles = useCallback(async () => {
+    const docs = await getDocs();
+    setFiles(docs.map((e) => ({ name: e.name, id: e.id })));
   }, []);
+
+  useEffect(() => {
+    loadFiles();
+  }, [loadFiles, refreshTrigger]);
+
   return (
     <section>
       <h1 className="text-2xl font-bold mb-6">Saved files</h1>

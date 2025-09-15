@@ -4,17 +4,12 @@ import { createBrowserRouter, Outlet, RouterProvider } from "react-router";
 import { lazy, StrictMode } from "react";
 
 const Homepage = lazy(() => import("./pages/App"));
-const Upload = lazy(() => import("./pages/Upload"));
 const Doc = lazy(() => import("./pages/doc/Doc"));
 
 const router = createBrowserRouter([
   {
     path: "/",
     Component: Homepage,
-  },
-  {
-    path: "/upload",
-    Component: Upload,
   },
   {
     path: "/doc",
