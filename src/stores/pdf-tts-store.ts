@@ -10,6 +10,8 @@ export type TTSStateProp = {
   position: TTSPositionProp;
   setPage: (page: number) => void;
   setPosition: (page: number, start: number, end: number) => void;
+  voice: SpeechSynthesisVoice | undefined;
+  setVoice: (voice: SpeechSynthesisVoice) => void;
 };
 
 const useTTSStore = create<TTSStateProp>((set) => ({
@@ -23,6 +25,11 @@ const useTTSStore = create<TTSStateProp>((set) => ({
   },
   setPosition: (page, start, end) => {
     set({ page, position: { start, end } });
+  },
+  // Find first English voice ar fallback to first voice
+  voice: undefined,
+  setVoice: (voice) => {
+    set({ voice });
   },
 }));
 

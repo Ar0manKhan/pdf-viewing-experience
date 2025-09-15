@@ -10,10 +10,12 @@ export default function usePlayPdf() {
   const getPageText = usePdfTextStore((e) => e.getPageTexts);
   const pdf = usePdfTextStore((e) => e.pdf);
   const totalPageCount = useMemo(() => pdf?.numPages ?? 0, [pdf]);
+  const voice = useTTSStore((e) => e.voice);
 
   const playPdf = useCallback(
     async function (pageNum: number, position: number) {
       window.speechSynthesis.cancel();
+      if (!voice) return;
       if (pageNum > totalPageCount) return;
       let pageTexts = getPageText(pageNum);
       if (!pageTexts) {
@@ -23,10 +25,6 @@ export default function usePlayPdf() {
         if (!newParts) return;
         pageTexts = newParts;
       }
-      const availableVoices = window.speechSynthesis.getVoices();
-      const defaultVoice =
-        availableVoices.find((voice) => voice.lang.includes("en")) ||
-        availableVoices[0];
       const rate = 1;
       const pitch = 1;
       const textChunks = chunk(pageTexts.slice(position), CHUNK_SIZE);
@@ -36,7 +34,7 @@ export default function usePlayPdf() {
           .filter(Boolean)
           .join(" ");
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = defaultVoice;
+        utterance.voice = voice;
         utterance.pitch = pitch;
         utterance.rate = rate;
         utterance.addEventListener("start", () => {
@@ -53,7 +51,7 @@ export default function usePlayPdf() {
         window.speechSynthesis.speak(utterance);
       });
     },
-    [getPageText, pdf, setPosition, totalPageCount],
+    [getPageText, pdf, setPosition, totalPageCount, voice],
   );
   return playPdf;
 }
