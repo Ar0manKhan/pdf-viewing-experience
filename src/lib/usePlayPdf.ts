@@ -40,14 +40,15 @@ export default function usePlayPdf() {
         utterance.pitch = pitch;
         utterance.rate = rate;
         utterance.addEventListener("start", () => {
-          setPosition(
-            pageNum,
-            position + i * CHUNK_SIZE,
-            position + (i + 1) * CHUNK_SIZE,
-          );
+          const currentEndPosition = position + (i + 1) * CHUNK_SIZE;
+          setPosition(pageNum, position + i * CHUNK_SIZE, currentEndPosition);
         });
         utterance.addEventListener("end", () => {
           setPosition(0, 0, 0);
+          // if this is the last chunk, load next page and play
+          if (i === textChunks.length - 1) {
+            playPdf(pageNum + 1, 0);
+          }
         });
         window.speechSynthesis.speak(utterance);
       });
