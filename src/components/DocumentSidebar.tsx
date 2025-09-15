@@ -10,7 +10,7 @@ import {
 import { ArrowLeft, Menu } from "lucide-react";
 import { DocumentInfo } from "./DocumentInfo";
 import PageScale from "./pdf/PageScale";
-import TTSPdf from "./TtsControls";
+import TtsControls from "./TtsControls";
 
 interface DocumentSidebarProps {
   docInfo: {
@@ -29,7 +29,7 @@ export function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
       </div>
       <div>
         <h2 className="font-semibold mb-3">Text-to-Speech</h2>
-        <TTSPdf />
+        <TtsControls />
       </div>
     </div>
   );

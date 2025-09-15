@@ -4,7 +4,7 @@ import "react-pdf/dist/Page/AnnotationLayer.css";
 import { useCallback, useRef, useState, type RefObject } from "react";
 import PdfPage from "./PdfPage";
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
-import { usPdfUiStore } from "../../stores/pdf-ui-store";
+import { usePdfUiStore } from "../../stores/pdf-ui-store";
 import { List } from "react-virtualized/dist/es/List";
 import useElementSize from "../../lib/useElementSize";
 import usePdfTextStore from "@/stores/pdf-text-store";
@@ -17,8 +17,8 @@ export default function PdfCanvas() {
   const [pageCount, setPageCount] = useState(0);
   const { debouncedScale } = useDebouncedScale();
   const setPdf = usePdfTextStore((e) => e.setPdf);
-  const pageHeight = usPdfUiStore((e) => e.height);
-  const setPageHeight = usPdfUiStore((e) => e.setHeight);
+  const pageHeight = usePdfUiStore((e) => e.height);
+  const setPageHeight = usePdfUiStore((e) => e.setHeight);
   const ref = useRef<HTMLDivElement>(null);
   const size = useElementSize(ref as RefObject<HTMLDivElement>);
 
@@ -31,7 +31,7 @@ export default function PdfCanvas() {
         setPageHeight(await getMajorityHeight(pdf));
       }
     },
-    [setPageHeight, setPdf],
+    [setPageHeight, setPdf]
   );
   const pdfBlob = usePdfTextStore((e) => e.pdfBlob);
   return (

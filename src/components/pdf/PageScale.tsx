@@ -1,11 +1,11 @@
-import { usPdfUiStore } from "@/stores/pdf-ui-store";
+import { usePdfUiStore } from "@/stores/pdf-ui-store";
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
 import { Minus, Plus, RotateCcw } from "lucide-react";
 
 export default function PageScale() {
-  const scale = usPdfUiStore((state) => state.scale);
-  const setScale = usPdfUiStore((state) => state.setScale);
+  const scale = usePdfUiStore((state) => state.scale);
+  const setScale = usePdfUiStore((state) => state.setScale);
 
   const zoomIn = () => setScale(Math.min(scale + 0.1, 3.0));
   const zoomOut = () => setScale(Math.max(scale - 0.1, 0.5));

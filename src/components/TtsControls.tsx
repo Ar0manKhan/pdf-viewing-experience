@@ -11,8 +11,9 @@ import { Card, CardContent } from "./ui/card";
 import { Play, RotateCcw, Square, Volume2 } from "lucide-react";
 import useTTSStore from "@/stores/pdf-tts-store";
 import usePlayPdf from "@/lib/usePlayPdf";
+import ModeToggle from "./ModeToggle";
 
-export default function TTSPdf() {
+export default function TtsControls() {
   const currentPage = useTTSStore((e) => e.page);
   const currentPosition = useTTSStore((e) => e.position);
   const isPlaying = useTTSStore((e) => e.isPlaying);
@@ -50,7 +51,7 @@ export default function TTSPdf() {
       const voice = voices.find((voice) => voice.name === value);
       if (voice) setVoice(voice);
     },
-    [setVoice, voices],
+    [setVoice, voices]
   );
 
   return (
@@ -74,6 +75,12 @@ export default function TTSPdf() {
               ))}
             </SelectContent>
           </Select>
+        </div>
+
+        {/* Mode Selection */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Reading Mode</label>
+          <ModeToggle />
         </div>
 
         {/* Playback Controls */}
