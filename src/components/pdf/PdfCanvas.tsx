@@ -33,13 +33,13 @@ export default function PdfCanvas() {
         setPageHeight(viewport.height);
       }
     },
-    [setPageHeight, setPdf],
+    [setPageHeight, setPdf]
   );
   const pdfBlob = usePdfTextStore((e) => e.pdfBlob);
   return (
-    <div className="flex  flex-col items-center justify-center bg-green-300 min-w-4/5 w-4/5">
+    <div className="flex flex-col items-center justify-center h-full w-full">
       <div
-        className="w-full h-screen overflow-hidden relative bg-white"
+        className="w-full h-full overflow-hidden relative bg-white shadow-sm"
         ref={ref}
       >
         <Document
