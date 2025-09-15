@@ -19,7 +19,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -31,10 +31,11 @@ export default function App() {
           </div>
         </div>
       </header>
-      <div className="container mx-auto px-4 py-6">
+      <main className="flex-grow container mx-auto px-4 py-6">
         <FirefoxWarning />
         <SavedFiles refreshTrigger={refreshTrigger} />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }
@@ -178,5 +179,74 @@ function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
         </div>
       )}
     </section>
+  );
+}
+
+function Footer() {
+  const links = {
+    github: "https://github.com/Ar0manKhan",
+    project: "/",
+    linkedin: "https://www.linkedin.com/in/ar0mankhan/",
+    business: "https://BizzGrow.in",
+  };
+
+  return (
+    <footer className="border-t bg-background text-foreground">
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+          <div>
+            <h3 className="font-bold text-lg">Pdf Reader</h3>
+            <p className="text-sm text-muted-foreground">by Arman</p>
+          </div>
+          <div className="flex flex-col space-y-2">
+            <h4 className="font-semibold">Connect</h4>
+            <a
+              href={links.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              GitHub
+            </a>
+            <a
+              href={links.project}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Project URL
+            </a>
+            <a
+              href={links.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              LinkedIn
+            </a>
+          </div>
+          <div>
+            <h4 className="font-semibold">Consultancy</h4>
+            <a
+              href={links.business}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              BizzGrow.in
+            </a>
+            <p className="text-xs text-muted-foreground">
+              for website development
+            </p>
+          </div>
+        </div>
+        <div className="mt-8 border-t pt-6 text-center">
+          <p className="text-sm text-muted-foreground">
+            Built with inspiration from great tools like shadcn, React, Zustand,
+            Tailwind CSS, and TypeScript.
+          </p>
+        </div>
+      </div>
+    </footer>
   );
 }
