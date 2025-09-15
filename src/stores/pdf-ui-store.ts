@@ -17,7 +17,7 @@ export const usePdfUiStore = create<PdfUiStore>()(
     (set) => ({
       scale: 1.5,
       mode: "reader",
-      followMode: true,
+      followMode: false,
       setScale: (scale) => set({ scale }),
       setMode: (mode) => set({ mode }),
       setFollowMode: (followMode) => set({ followMode }),
