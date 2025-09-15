@@ -18,6 +18,7 @@ type PdfTextStoreProp = {
   store: Map<number, TextPart[]>;
   getPageTexts: (page: number) => TextPart[] | undefined;
   setPageTexts: (page: number, texts: TextPart[]) => void;
+  clean: () => void;
 };
 
 const usePdfTextStore = create<PdfTextStoreProp>((set, get) => ({
@@ -41,6 +42,9 @@ const usePdfTextStore = create<PdfTextStoreProp>((set, get) => ({
         store: newStore,
       };
     });
+  },
+  clean: () => {
+    set({ store: new Map(), pdf: undefined, pdfBlob: null });
   },
 }));
 

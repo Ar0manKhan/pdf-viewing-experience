@@ -12,6 +12,7 @@ export type TTSStateProp = {
   setPosition: (page: number, start: number, end: number) => void;
   voice: SpeechSynthesisVoice | undefined;
   setVoice: (voice: SpeechSynthesisVoice) => void;
+  clean: () => void;
 };
 
 const useTTSStore = create<TTSStateProp>((set) => ({
@@ -30,6 +31,9 @@ const useTTSStore = create<TTSStateProp>((set) => ({
   voice: undefined,
   setVoice: (voice) => {
     set({ voice });
+  },
+  clean: () => {
+    set({ page: 1, position: { start: 0, end: 0 }, voice: undefined });
   },
 }));
 

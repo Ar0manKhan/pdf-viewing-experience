@@ -8,10 +8,10 @@ import { useParams, Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import useTTSStore from "@/stores/pdf-tts-store";
 
 export default function Doc() {
   const params = useParams();
-  const pdfBlob = usePdfTextStore((e) => e.pdfBlob);
   const setPdfBlob = usePdfTextStore((e) => e.setPdfBlob);
   const [docInfo, setDocInfo] = useState<{
     name: string;
@@ -20,6 +20,8 @@ export default function Doc() {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const cleanTextStore = usePdfTextStore((e) => e.clean);
+  const cleanTTSStore = useTTSStore((e) => e.clean);
 
   useEffect(() => {
     async function loadDoc() {
@@ -52,6 +54,10 @@ export default function Doc() {
       }
     }
     loadDoc();
+    return () => {
+      cleanTextStore();
+      cleanTTSStore();
+    };
   }, [params, setPdfBlob]);
 
   if (isLoading) {
