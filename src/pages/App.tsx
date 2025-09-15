@@ -5,16 +5,20 @@ import { getDocs } from "@/lib/indexedDb/docStore";
 
 export default function App() {
   return (
-    <div className="container mx-auto py-4">
-      <div className="flex gap-4">
-        <Link to="/doc">
-          <Button>Go to doc</Button>
-        </Link>
-        <Link to="/upload">
-          <Button>Upload file</Button>
-        </Link>
-      </div>
-      <SavedFiles />
+    <div className="min-h-screen bg-background">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-foreground">Pdf Reader</h1>
+            <Link to="/upload">
+              <Button>Upload PDF</Button>
+            </Link>
+          </div>
+        </div>
+      </header>
+      <main className="container mx-auto px-4 py-6">
+        <SavedFiles />
+      </main>
     </div>
   );
 }
