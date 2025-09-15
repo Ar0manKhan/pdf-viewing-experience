@@ -7,7 +7,7 @@ export default function TTSPdf() {
   const setPosition = useTTSStore((e) => e.setPosition);
   const handleCancel = useCallback(() => {
     window.speechSynthesis.cancel();
-    setPosition(0, 0);
+    setPosition(0, 0, 0);
   }, [setPosition]);
   const playPdf = usePlayPdf();
   return (

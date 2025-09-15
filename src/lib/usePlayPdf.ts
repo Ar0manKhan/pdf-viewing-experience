@@ -41,12 +41,13 @@ export default function usePlayPdf() {
         utterance.rate = rate;
         utterance.addEventListener("start", () => {
           setPosition(
+            pageNum,
             position + i * CHUNK_SIZE,
             position + (i + 1) * CHUNK_SIZE,
           );
         });
         utterance.addEventListener("end", () => {
-          setPosition(0, 0);
+          setPosition(0, 0, 0);
         });
         window.speechSynthesis.speak(utterance);
       });

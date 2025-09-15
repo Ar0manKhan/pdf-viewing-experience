@@ -9,7 +9,7 @@ export type TTSStateProp = {
   page: number;
   position: TTSPositionProp;
   setPage: (page: number) => void;
-  setPosition: (start: number, end: number) => void;
+  setPosition: (page: number, start: number, end: number) => void;
 };
 
 const useTTSStore = create<TTSStateProp>((set) => ({
@@ -21,13 +21,9 @@ const useTTSStore = create<TTSStateProp>((set) => ({
     start: 0,
     end: 0,
   },
-  setPosition: (start, end) => {
-    set({ position: { start, end } });
+  setPosition: (page, start, end) => {
+    set({ page, position: { start, end } });
   },
 }));
-
-useTTSStore.subscribe((e) => {
-  console.log("TTS Store", e);
-});
 
 export default useTTSStore;
