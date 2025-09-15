@@ -8,11 +8,11 @@ export default function PageScale() {
   const zoomIn = () => setScale(scale + 0.1);
   const zoomOut = () => setScale(scale - 0.1);
   return (
-    <div className="flex flex-col gap-2 items-center w-fit">
-      <span>{scale.toFixed(1)}</span>
+    <div className="flex gap-2 items-center w-fit">
       <Button onClick={zoomOut} variant={"outline"}>
         <Minus />
       </Button>
+      <span>{scale.toFixed(1)}</span>
       <Button onClick={zoomIn} variant={"outline"}>
         <Plus />
       </Button>

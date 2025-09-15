@@ -10,11 +10,15 @@ export type TextPart = {
 
 type PdfTextStoreProp = {
   store: Map<number, TextPart[]>;
+  getPageTexts: (page: number) => TextPart[] | undefined;
   setPageTexts: (page: number, texts: TextPart[]) => void;
 };
 
-const usePdfTextStore = create<PdfTextStoreProp>((set) => ({
+const usePdfTextStore = create<PdfTextStoreProp>((set, get) => ({
   store: new Map(),
+  getPageTexts: (page) => {
+    return get().store.get(page);
+  },
   setPageTexts: (page, texts) => {
     set((state) => ({
       store: state.store.set(page, texts),
