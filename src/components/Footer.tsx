@@ -1,4 +1,6 @@
-export function Footer() {
+import { memo } from "react";
+
+function Footer() {
   const year = new Date().getFullYear();
 
   const linkBase =
@@ -48,7 +50,7 @@ export function Footer() {
             <h4 className="text-sm font-medium text-white/80">Side business</h4>
             <div className="space-y-1">
               <a
-                href="some-url-for-now"
+                href="https://www.bizzgrow.in"
                 className={`${linkBase} inline-flex items-center`}
                 aria-label="BizzGrow.in website"
               >
@@ -71,3 +73,5 @@ export function Footer() {
     </footer>
   );
 }
+
+export default memo(Footer);

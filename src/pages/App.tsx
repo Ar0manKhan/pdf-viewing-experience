@@ -10,7 +10,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getDocs, deleteDoc, type Doc } from "@/lib/indexedDb/docStore";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { UploadDialog } from "@/components/UploadDialog";
-import { Footer } from "../components/Footer";
+import Footer from "../components/Footer";
 
 export default function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
