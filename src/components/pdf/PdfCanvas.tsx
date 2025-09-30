@@ -10,7 +10,6 @@ import {
   type RefObject,
 } from "react";
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
-import useElementSize from "../../lib/useElementSize";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import { useDebouncedScale } from "@/hooks/useDebouncedScale";
 import getMajorityHeight from "@/lib/getMajorityHeight";
@@ -20,6 +19,7 @@ import PdfPage from "./PdfPage";
 import usePdfVirtualizedStore from "@/stores/pdf-virtualized-store";
 import useTTSStore from "@/stores/pdf-tts-store";
 import { usePdfUiStore } from "@/stores/pdf-ui-store";
+import useElementSize from "@/lib/hooks/useElementSize";
 
 if (import.meta.env.PROD) {
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;

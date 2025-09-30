@@ -4,6 +4,7 @@ import ModeToggle from "./ModeToggle";
 import FollowModeToggle from "./FollowModeToggle";
 import TtsVoiceSelect from "./TtsVoiceSelect";
 import TtsPlaybackControls from "./TtsPlaybackControls";
+import AiTextFilterToggle from "./AiTextFilterToggle";
 
 export default function TtsControls() {
   return (
@@ -22,6 +23,8 @@ export default function TtsControls() {
         </div>
 
         <TtsPlaybackControls />
+
+        <AiTextFilterToggle />
 
         {/* Status Indicator */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
