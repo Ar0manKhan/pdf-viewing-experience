@@ -7,9 +7,11 @@ type PdfUiStore = {
   scale: number;
   mode: ReadingMode;
   followMode: boolean;
+  scrollToView: boolean;
   setScale: (scale: number) => void;
   setMode: (mode: ReadingMode) => void;
   setFollowMode: (followMode: boolean) => void;
+  setScrollToView: (scrollToView: boolean) => void;
 };
 
 export const usePdfUiStore = create<PdfUiStore>()(
@@ -18,9 +20,11 @@ export const usePdfUiStore = create<PdfUiStore>()(
       scale: 1.5,
       mode: "reader",
       followMode: false,
+      scrollToView: false,
       setScale: (scale) => set({ scale }),
       setMode: (mode) => set({ mode }),
       setFollowMode: (followMode) => set({ followMode }),
+      setScrollToView: (scrollToView) => set({ scrollToView }),
     }),
     {
       name: "pdf-ui-storage", // name of the item in the storage (must be unique)

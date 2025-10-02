@@ -44,8 +44,8 @@ function TtsPlaybackControls() {
       )}
 
       {(currentPage > 1 || currentPosition.start > 0) && (
-        <div className="text-xs text-muted-foreground text-center">
-          Last read: page {currentPage}, position {currentPosition.start}
+        <div className="text-xs text-muted-foreground text-right">
+          Last read: page {currentPage}
         </div>
       )}
 

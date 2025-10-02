@@ -38,9 +38,12 @@ export default function PdfCanvas() {
   const setRenderedRows = usePdfVirtualizedStore((e) => e.setRenderedRows);
   const renderedRows = usePdfVirtualizedStore((e) => e.renderedRows);
   const pdfPage = useTTSStore((e) => e.page);
+  const isPlaying = useTTSStore((e) => e.isPlaying);
+  const scrollIntoViewMannally = usePdfUiStore((e) => e.scrollToView);
   const followMode = usePdfUiStore((e) => e.followMode);
   const scrollIndex = useMemo(() => {
-    if (!followMode) return undefined;
+    if ((!isPlaying && !scrollIntoViewMannally) || (isPlaying && !followMode))
+      return undefined;
     const targetPage = pdfPage - 1;
     if (targetPage < 0) return undefined;
     if (!renderedRows) return undefined;
@@ -51,7 +54,14 @@ export default function PdfCanvas() {
       return undefined;
     if (pageCount === 0) return undefined;
     return targetPage;
-  }, [followMode, pageCount, pdfPage, renderedRows]);
+  }, [
+    followMode,
+    isPlaying,
+    pageCount,
+    pdfPage,
+    renderedRows,
+    scrollIntoViewMannally,
+  ]);
 
   const onDocumentLoadSuccess: OnDocumentLoadSuccess = useCallback(
     async (pdf) => {
