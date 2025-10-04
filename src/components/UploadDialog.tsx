@@ -13,6 +13,7 @@ import {
 import { Button } from "./ui/button";
 import { useState, useCallback } from "react";
 import { setDoc, type Doc } from "@/lib/indexedDb/docStore";
+import { DynamicIcon } from "lucide-react/dynamic";
 
 interface UploadDialogProps {
   onUploadSuccess?: () => void;
@@ -31,7 +32,7 @@ export function UploadDialog({ onUploadSuccess }: UploadDialogProps) {
           const fileBuffer = await file.arrayBuffer();
           const hashBuffer = await window.crypto.subtle.digest(
             "SHA-1",
-            fileBuffer
+            fileBuffer,
           );
           const hashHex = Array.from(new Uint8Array(hashBuffer))
             .map((b) => b.toString(16).padStart(2, "0"))
@@ -57,13 +58,16 @@ export function UploadDialog({ onUploadSuccess }: UploadDialogProps) {
         console.error(err);
       }
     },
-    [onUploadSuccess]
+    [onUploadSuccess],
   );
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button>Upload PDF</Button>
+        <Button aria-label="Upload PDF">
+          <DynamicIcon name="upload" className="h-4 w-4 sm:mr-2" />
+          <span className="hidden sm:inline">Upload PDF</span>
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
