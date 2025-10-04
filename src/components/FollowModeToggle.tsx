@@ -12,7 +12,7 @@ export default function FollowModeToggle() {
   const setScrollToView = usePdfUiStore((s) => s.setScrollToView);
   const showCurrentPage = useCallback(() => {
     setScrollToView(true);
-    setTimeout(() => setScrollToView(false), 1000);
+    setTimeout(() => setScrollToView(false), 10);
   }, [setScrollToView]);
 
   if (isPlaying) {

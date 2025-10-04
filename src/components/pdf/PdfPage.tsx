@@ -7,7 +7,7 @@ import { usePdfUiStore } from "../../stores/pdf-ui-store";
 import usePdfTextStore, { type TextPart } from "@/stores/pdf-text-store";
 import getTextParts from "@/lib/getTextParts";
 import useTTSStore from "@/stores/pdf-tts-store";
-import usePlayPdf from "@/lib/usePlayPdf";
+import usePlayPdf from "@/lib/hooks/usePlayPdf";
 
 type PdfPageProps = {
   pageNumber: number;

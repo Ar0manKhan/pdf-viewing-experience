@@ -2,7 +2,7 @@ import { memo, useCallback } from "react";
 import { Button } from "./ui/button";
 import { DynamicIcon } from "lucide-react/dynamic";
 import useTTSStore from "@/stores/pdf-tts-store";
-import usePlayPdf from "@/lib/usePlayPdf";
+import usePlayPdf from "@/lib/hooks/usePlayPdf";
 
 function TtsPlaybackControls() {
   const currentPage = useTTSStore((e) => e.page);

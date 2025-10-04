@@ -1,10 +1,12 @@
 import usePdfTextStore from "@/stores/pdf-text-store";
 import useTTSStore from "@/stores/pdf-tts-store";
-import preloadTextParts from "./preloadTextParts";
+import preloadTextParts from "../preloadTextParts";
 import usePdfIdbStore from "@/stores/pdf-idb-store";
 import chunk from "lodash-es/chunk";
 import { useCallback, useEffect, useMemo } from "react";
-import { setDoc } from "./indexedDb/docStore";
+import { setDoc } from "../indexedDb/docStore";
+import { textRemoveNoiseArray } from "../ai/text-remove-noise";
+import { usePdfUiStore } from "@/stores/pdf-ui-store";
 
 const CHUNK_SIZE = 50000;
 
@@ -18,6 +20,7 @@ export default function usePlayPdf() {
   const pdfIdbData = usePdfIdbStore((e) => e.data);
   const setPdfIdbLastPlayed = usePdfIdbStore((e) => e.setLastPlayedData);
   const resetTts = useTTSStore((e) => e.resetPosition);
+  const cleanTextByAi = usePdfUiStore((e) => e.cleanTextByAi);
 
   useEffect(() => {
     if (pdfIdbData) {
@@ -30,75 +33,83 @@ export default function usePlayPdf() {
     resetTts();
   }, [resetTts, setPlaying]);
 
-  const playChunk = useCallback(
+  const _getPageData = useCallback(
     async function (pageNum: number, chunkIndex: number, position: number) {
-      if (!voice || pageNum > totalPageCount) {
-        speechEnd();
-        return;
-      }
-
       let pageTexts = getPageText(pageNum);
+      if (pageNum > totalPageCount)
+        return { pageNum: -1, chunkIndex: -1, position: -1, text: "" };
       if (!pageTexts) {
         const newParts = await preloadTextParts(pdf, pageNum);
         if (!newParts) {
-          speechEnd();
-          return;
+          return { pageNum: -1, chunkIndex: -1, position: -1, text: "" };
         }
         pageTexts = newParts;
       }
-
       const textChunks = chunk(pageTexts.slice(position), CHUNK_SIZE);
-
       // If no more chunks in current page, try next page
       if (chunkIndex >= textChunks.length) {
-        playChunk(pageNum + 1, 0, 0);
-        return;
+        return _getPageData(pageNum + 1, 0, 0);
       }
-
       const currentChunk = textChunks[chunkIndex];
       const text = currentChunk
         .map((e) => e.text.trim())
         .filter(Boolean)
         .join(" ");
-
       if (!text) {
         // If current chunk is empty, move to next chunk
-        playChunk(pageNum, chunkIndex + 1, position);
+        return _getPageData(pageNum, chunkIndex + 1, position);
+      }
+      const currentTextArray = currentChunk.map((e) => e.text);
+      let cleanTextArray = currentTextArray;
+      if (cleanTextByAi) {
+        cleanTextArray = await textRemoveNoiseArray(currentTextArray);
+      }
+      const cleanText = cleanTextArray.join(" ");
+      return { pageNum, chunkIndex, position, text: cleanText };
+    },
+    [cleanTextByAi, getPageText, pdf, totalPageCount],
+  );
+
+  const playChunk = useCallback(
+    async function (pageNum: number, chunkIndex: number, position: number) {
+      const {
+        pageNum: newPageNum,
+        chunkIndex: newChunkIndex,
+        position: newPosition,
+        text,
+      } = await _getPageData(pageNum, chunkIndex, position);
+      if (newPageNum === -1 || !voice) {
+        speechEnd();
         return;
       }
-
       const rate = 1;
       const pitch = 1;
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.voice = voice;
       utterance.pitch = pitch;
       utterance.rate = rate;
-
       utterance.addEventListener("start", () => {
-        const currentStartPosition = position + chunkIndex * CHUNK_SIZE;
-        const currentEndPosition = position + (chunkIndex + 1) * CHUNK_SIZE;
-        setPosition(pageNum, currentStartPosition, currentEndPosition);
+        const currentStartPosition = newPosition + newChunkIndex * CHUNK_SIZE;
+        const currentEndPosition =
+          newPosition + (newChunkIndex + 1) * CHUNK_SIZE;
+        setPosition(newPageNum, currentStartPosition, currentEndPosition);
         setPdfIdbLastPlayed({
-          page: pageNum,
+          page: newPageNum,
           part: currentStartPosition,
         });
         setPlaying(true);
       });
-
       utterance.addEventListener("end", () => {
-        playChunk(pageNum, chunkIndex + 1, position);
+        playChunk(newPageNum, newChunkIndex + 1, newPosition);
       });
-
       window.speechSynthesis.speak(utterance);
     },
     [
-      getPageText,
-      pdf,
+      _getPageData,
       setPdfIdbLastPlayed,
       setPlaying,
       setPosition,
       speechEnd,
-      totalPageCount,
       voice,
     ],
   );
