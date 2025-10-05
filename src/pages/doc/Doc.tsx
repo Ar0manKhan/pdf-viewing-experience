@@ -1,4 +1,4 @@
-import { getDoc } from "@/lib/indexedDb/docStore";
+import { getDoc, setDoc } from "@/lib/indexedDb/docStore";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import usePdfIdbStore from "@/stores/pdf-idb-store";
 import { Suspense, lazy, useEffect, useState } from "react";
@@ -44,11 +44,14 @@ export default function Doc() {
           setIsLoading(false);
           return;
         }
+        doc.lastAccessed = new Date().toISOString();
+        // Update last accessed timestamp
+        await setDoc(doc);
         if (doc.lastPlayed) {
           setPlayingPosition(
             doc.lastPlayed.page,
             doc.lastPlayed.part,
-            doc.lastPlayed.part,
+            doc.lastPlayed.part
           );
         }
         setDocInfo({

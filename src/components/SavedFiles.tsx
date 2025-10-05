@@ -10,7 +10,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState, useCallback } from "react";
-import { getDocs, deleteDoc, type Doc } from "@/lib/indexedDb/docStore";
+import {
+  getDocs,
+  deleteDoc,
+  sortDocsByLastAccessed,
+  type Doc,
+} from "@/lib/indexedDb/docStore";
 import { DynamicIcon } from "lucide-react/dynamic";
 
 interface DocumentCardProps {
@@ -93,8 +98,13 @@ export default function SavedFiles({
 
   const loadFiles = useCallback(async () => {
     const docs = await getDocs();
+    const sortedDocs = sortDocsByLastAccessed(docs);
     setFiles(
-      docs.map((e) => ({ name: e.name, id: e.id, lastPlayed: e.lastPlayed })),
+      sortedDocs.map((e) => ({
+        name: e.name,
+        id: e.id,
+        lastPlayed: e.lastPlayed,
+      }))
     );
   }, []);
 
@@ -103,7 +113,7 @@ export default function SavedFiles({
       await deleteDoc(id);
       loadFiles();
     },
-    [loadFiles],
+    [loadFiles]
   );
 
   useEffect(() => {

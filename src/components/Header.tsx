@@ -1,6 +1,7 @@
 import { UploadDialog } from "@/components/UploadDialog";
 import { Button } from "@/components/ui/button";
 import { DynamicIcon } from "lucide-react/dynamic";
+import { Link } from "react-router";
 
 interface HeaderProps {
   onUploadSuccess: () => void;
@@ -17,9 +18,11 @@ export default function Header({ onUploadSuccess }: HeaderProps) {
           </h1>
           <div className="flex items-center gap-2">
             <UploadDialog onUploadSuccess={onUploadSuccess} />
-            <Button variant="outline" size="icon">
-              <DynamicIcon name="settings" className="h-4 w-4" />
-            </Button>
+            <Link to="/settings">
+              <Button variant="outline" size="icon">
+                <DynamicIcon name="settings" className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
