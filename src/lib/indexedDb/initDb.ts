@@ -10,7 +10,7 @@ const DB_VERSION = 2;
 
 const initDB = async () => {
   return await openDB(DB_NAME, DB_VERSION, {
-    upgrade(db, oldVersion, newVersion, tx) {
+    upgrade(db) {
       // in new version, if docs is not defined, then define them, otherwise,
       // do nothing for docs store
       if (!db.objectStoreNames.contains(Stores.Docs)) {

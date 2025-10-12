@@ -24,7 +24,7 @@ import useElementSize from "@/lib/hooks/useElementSize";
 if (import.meta.env.PROD) {
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 } else {
-  pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.mjs`;
+  pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.mjs`;
 }
 
 export default function PdfCanvas() {
