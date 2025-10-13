@@ -4,13 +4,22 @@ import findIndex from "lodash-es/findIndex";
 import { getPromptToClean } from "./getPromptToClean";
 
 async function textRemoveNoise(text: string) {
+  let groqApiKey = localStorage.getItem("groq_api_key");
+  if (!groqApiKey) return text;
+  try {
+    groqApiKey = JSON.parse(groqApiKey);
+  } catch (err) {
+    console.error("Error parsing json:", err);
+    return text;
+  }
+  if (!groqApiKey) return text;
   try {
     if (!text.trim().length) return;
     const groq = createGroq({
-      apiKey: import.meta.env.VITE_GROQ_API_KEY,
+      apiKey: groqApiKey,
     });
     const response = await generateText({
-      model: groq("gemma2-9b-it"),
+      model: groq("openai/gpt-oss-20b"),
       prompt: getPromptToClean(text),
     });
     const result = response.text;
