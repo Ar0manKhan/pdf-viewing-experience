@@ -1,6 +1,7 @@
 import { pdfjs, Document } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
+import workerURL from "pdfjs-dist/build/pdf.worker.min?url";
 import {
   Suspense,
   useCallback,
@@ -21,11 +22,8 @@ import useTTSStore from "@/stores/pdf-tts-store";
 import { usePdfUiStore } from "@/stores/pdf-ui-store";
 import useElementSize from "@/lib/hooks/useElementSize";
 
-if (import.meta.env.PROD) {
-  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
-} else {
-  pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.mjs`;
-}
+// pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export default function PdfCanvas() {
   const [pageCount, setPageCount] = useState(0);
