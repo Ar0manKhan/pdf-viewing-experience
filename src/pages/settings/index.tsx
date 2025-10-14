@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 export default function Settings() {
   return (
-    <div className="p-6">
+    <div className="container mx-auto my-6">
       <GroqKey />
       <Toaster />
     </div>
