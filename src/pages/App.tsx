@@ -56,7 +56,7 @@ function FirefoxWarning() {
 
   return (
     <div
-      className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 relative rounded-md mb-4"
+      className="bg-warning border-l-4 border-warning-foreground text-warning-foreground p-4 relative rounded-md mb-4"
       role="alert"
     >
       <div className="flex">

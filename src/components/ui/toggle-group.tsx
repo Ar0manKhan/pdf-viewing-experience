@@ -18,7 +18,7 @@ const toggleGroupVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground dark:hover:bg-accent/50 dark:data-[state=on]:bg-accent/50",
         blackWhite:
-          "border bg-background shadow-xs hover:bg-gray-100 hover:text-gray-900 data-[state=on]:bg-black data-[state=on]:text-white data-[state=on]:border-black dark:bg-input/30 dark:border-input dark:hover:bg-input/50 dark:data-[state=on]:bg-white dark:data-[state=on]:text-black dark:data-[state=on]:border-white",
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:border-primary dark:bg-input/30 dark:border-input dark:hover:bg-input/50 dark:data-[state=on]:bg-primary dark:data-[state=on]:text-primary-foreground dark:data-[state=on]:border-primary",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
