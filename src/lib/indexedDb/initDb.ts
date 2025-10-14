@@ -3,10 +3,11 @@ import { openDB } from "idb";
 export enum Stores {
   Docs = "Docs",
   Credentials = "credentials",
+  CleanTextCache = "CleanTextCache",
 }
 
 const DB_NAME = "pdf-viewer";
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 const initDB = async () => {
   return await openDB(DB_NAME, DB_VERSION, {
@@ -28,6 +29,12 @@ const initDB = async () => {
           autoIncrement: true,
         });
         store.createIndex("provider", "provider", { unique: false });
+      }
+      if (!db.objectStoreNames.contains(Stores.CleanTextCache)) {
+        const store = db.createObjectStore(Stores.CleanTextCache, {
+          keyPath: "originalText",
+        });
+        store.createIndex("originalText", "originalText", { unique: true });
       }
     },
   });

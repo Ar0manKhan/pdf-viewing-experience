@@ -2,6 +2,7 @@ import { generateText } from "ai";
 import { createGroq } from "@ai-sdk/groq";
 import findIndex from "lodash-es/findIndex";
 import { getPromptToClean } from "./getPromptToClean";
+import { getCleanText, setCleanText } from "../indexedDb/cleanTextCacheStore";
 
 async function textRemoveNoise(text: string) {
   let groqApiKey = localStorage.getItem("groq_api_key");
@@ -32,11 +33,11 @@ async function textRemoveNoise(text: string) {
 
 // TODO: Move this to idb instaed of local storage
 export async function textRemoveNoiseCached(text: string) {
-  const data = localStorage.getItem("textRemoveNoise:" + text);
+  const data = await getCleanText(text);
   if (data) return data;
   const result = await textRemoveNoise(text);
   if (result) {
-    localStorage.setItem("textRemoveNoise:" + text, result);
+    await setCleanText(text, result);
   }
   return result;
 }
