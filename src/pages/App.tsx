@@ -1,16 +1,8 @@
-import { Link } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { useEffect, useState, useCallback } from "react";
-import { getDocs, deleteDoc, type Doc } from "@/lib/indexedDb/docStore";
+import { useEffect, useState } from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
-import { UploadDialog } from "@/components/UploadDialog";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
+import SavedFiles from "../components/SavedFiles";
 
 export default function App() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -21,17 +13,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <img src="/logo.webp" alt="Logo" className="h-8 w-8" />
-              Pdf Reader
-            </h1>
-            <UploadDialog onUploadSuccess={handleUploadSuccess} />
-          </div>
-        </div>
-      </header>
+      <Header onUploadSuccess={handleUploadSuccess} />
       <main className="flex-grow container mx-auto px-4 py-6">
         <FirefoxWarning />
         <SavedFiles refreshTrigger={refreshTrigger} />
@@ -75,110 +57,5 @@ function FirefoxWarning() {
         </button>
       </div>
     </div>
-  );
-}
-
-interface DocumentCardProps {
-  id: string;
-  name: string;
-  lastPlayed: Doc["lastPlayed"];
-  onDelete: (id: string) => void;
-}
-
-function DocumentCard({ id, name, lastPlayed, onDelete }: DocumentCardProps) {
-  return (
-    <div className="relative">
-      <Link to={`/doc/${id}`} className="block">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-center h-24 bg-muted/50 rounded-lg">
-              <DynamicIcon
-                name="file-text"
-                className="h-8 w-8 text-muted-foreground"
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <CardTitle className="text-sm font-medium line-clamp-2">
-              {name}
-            </CardTitle>
-            {lastPlayed && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Last Page: {lastPlayed.page}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      </Link>
-      <Button
-        variant="destructive"
-        size="sm"
-        className="absolute top-2 right-2 h-8 w-8 p-0"
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onDelete(id);
-        }}
-      >
-        <DynamicIcon name="trash" className="h-4 w-4" />
-      </Button>
-    </div>
-  );
-}
-
-function SavedFiles({ refreshTrigger }: { refreshTrigger?: number }) {
-  const [files, setFiles] = useState<
-    {
-      name: string;
-      id: string;
-      lastPlayed: Doc["lastPlayed"];
-    }[]
-  >([]);
-
-  const loadFiles = useCallback(async () => {
-    const docs = await getDocs();
-    setFiles(
-      docs.map((e) => ({ name: e.name, id: e.id, lastPlayed: e.lastPlayed })),
-    );
-  }, []);
-
-  const handleDelete = useCallback(
-    async (id: string) => {
-      await deleteDoc(id);
-      loadFiles();
-    },
-    [loadFiles],
-  );
-
-  useEffect(() => {
-    loadFiles();
-  }, [loadFiles, refreshTrigger]);
-
-  return (
-    <section>
-      <h1 className="text-2xl font-bold mb-6">Saved files</h1>
-      {files.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <DynamicIcon
-            name="file-text"
-            className="mx-auto h-12 w-12 mb-4 opacity-50"
-          />
-          <p>No saved files yet</p>
-          <p className="text-sm">Upload a PDF to get started</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {files.map((file) => (
-            <DocumentCard
-              key={file.id}
-              id={file.id}
-              name={file.name}
-              lastPlayed={file.lastPlayed}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      )}
-    </section>
   );
 }

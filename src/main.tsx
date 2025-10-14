@@ -5,6 +5,7 @@ import { lazy, StrictMode } from "react";
 
 const Homepage = lazy(() => import("./pages/App"));
 const Doc = lazy(() => import("./pages/doc/Doc"));
+const Settings = lazy(() => import("./pages/settings/index"));
 
 const router = createBrowserRouter([
   {
@@ -21,10 +22,14 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/settings",
+    Component: Settings,
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>
+  </StrictMode>,
 );
