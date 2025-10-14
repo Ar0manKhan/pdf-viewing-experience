@@ -1,7 +1,6 @@
 import { pdfjs, Document } from "react-pdf";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
-import workerURL from "pdfjs-dist/build/pdf.worker.min?url";
 import {
   Suspense,
   useCallback,
