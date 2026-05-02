@@ -13,7 +13,7 @@ import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import { useDebouncedScale } from "@/hooks/useDebouncedScale";
 import { useZoomCentering } from "@/hooks/useZoomCentering";
-import getMajorityHeight from "@/lib/getMajorityHeight";
+import getMajorityDimensions from "@/lib/getMajorityDimensions";
 import { Skeleton } from "../ui/skeleton";
 import List, { type List as ListType } from "react-virtualized/dist/es/List";
 import PdfPage from "./PdfPage";
@@ -32,6 +32,8 @@ export default function PdfCanvas() {
   const setPdf = usePdfTextStore((e) => e.setPdf);
   const pageHeight = usePdfVirtualizedStore((e) => e.height);
   const setPageHeight = usePdfVirtualizedStore((e) => e.setHeight);
+  const pageWidth = usePdfVirtualizedStore((e) => e.width);
+  const setPageWidth = usePdfVirtualizedStore((e) => e.setWidth);
   const ref = useRef<HTMLDivElement>(null);
   const size = useElementSize(ref as RefObject<HTMLDivElement>);
   const setRenderedRows = usePdfVirtualizedStore((e) => e.setRenderedRows);
@@ -72,16 +74,18 @@ export default function PdfCanvas() {
       const numPages = pdf.numPages;
       setPageCount(numPages);
       if (numPages > 0) {
-        setPageHeight(await getMajorityHeight(pdf));
+        const dimensions = await getMajorityDimensions(pdf);
+        setPageHeight(dimensions.height);
+        setPageWidth(dimensions.width);
       }
     },
-    [setPageHeight, setPdf],
+    [setPageHeight, setPageWidth, setPdf],
   );
   const pdfBlob = usePdfTextStore((e) => e.pdfBlob);
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
       <div
-        className="w-full h-full overflow-hidden relative bg-white shadow-sm"
+        className="w-full h-full overflow-auto relative bg-white shadow-sm"
         ref={ref}
       >
         <Suspense fallback={<Skeleton className="h-full w-full" />}>
@@ -93,7 +97,7 @@ export default function PdfCanvas() {
             <List
               ref={listRef}
               height={size?.height || 0}
-              width={size?.width || 0}
+              width={Math.max(size?.width || 0, pageWidth * debouncedScale)}
               rowHeight={pageHeight * debouncedScale}
               rowCount={pageCount}
               overscanRowCount={1}

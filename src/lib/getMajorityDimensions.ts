@@ -1,9 +1,14 @@
 // this function accepts pdf doc.
-// get height of random page and return the majority height
+// get dimensions of random pages and return the majority dimensions
 
 import { pdfjs } from "react-pdf";
 
-async function getMajorityHeight(doc: pdfjs.PDFDocumentProxy) {
+export interface PageDimensions {
+  width: number;
+  height: number;
+}
+
+async function getMajorityDimensions(doc: pdfjs.PDFDocumentProxy): Promise<PageDimensions> {
   // if page count is less than 20, then page index will be all 1 to 20
   // else it will be 20 random page index
   const pageIndexes = [];
@@ -18,15 +23,18 @@ async function getMajorityHeight(doc: pdfjs.PDFDocumentProxy) {
     }
   }
 
-  const allHeights = await Promise.all(
+  const allDimensions = await Promise.all(
     pageIndexes.map(async (index) => {
       const page = await doc.getPage(index + 1);
       const viewport = page.getViewport({ scale: 1 });
-      return viewport.height;
+      return { width: viewport.width, height: viewport.height };
     }),
   );
 
-  return Math.max(...allHeights);
+  const maxWidth = Math.max(...allDimensions.map(d => d.width));
+  const maxHeight = Math.max(...allDimensions.map(d => d.height));
+
+  return { width: maxWidth, height: maxHeight };
 }
 
-export default getMajorityHeight;
+export default getMajorityDimensions;
