@@ -12,9 +12,10 @@ import {
 import type { OnDocumentLoadSuccess } from "react-pdf/dist/shared/types.js";
 import usePdfTextStore from "@/stores/pdf-text-store";
 import { useDebouncedScale } from "@/hooks/useDebouncedScale";
+import { useZoomCentering } from "@/hooks/useZoomCentering";
 import getMajorityHeight from "@/lib/getMajorityHeight";
 import { Skeleton } from "../ui/skeleton";
-import List from "react-virtualized/dist/es/List";
+import List, { type List as ListType } from "react-virtualized/dist/es/List";
 import PdfPage from "./PdfPage";
 import usePdfVirtualizedStore from "@/stores/pdf-virtualized-store";
 import useTTSStore from "@/stores/pdf-tts-store";
@@ -26,7 +27,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.vers
 
 export default function PdfCanvas() {
   const [pageCount, setPageCount] = useState(0);
-  const { debouncedScale } = useDebouncedScale();
+  const { debouncedScale, isDebouncing } = useDebouncedScale();
+  const listRef = useRef<ListType | null>(null);
   const setPdf = usePdfTextStore((e) => e.setPdf);
   const pageHeight = usePdfVirtualizedStore((e) => e.height);
   const setPageHeight = usePdfVirtualizedStore((e) => e.setHeight);
@@ -38,6 +40,10 @@ export default function PdfCanvas() {
   const isPlaying = useTTSStore((e) => e.isPlaying);
   const scrollIntoViewMannally = usePdfUiStore((e) => e.scrollToView);
   const followMode = usePdfUiStore((e) => e.followMode);
+
+  // Maintain viewport center position during zoom. It is boilderplat to fix issue on zoom
+  useZoomCentering(listRef, isDebouncing, debouncedScale, size?.height || 0);
+
   const scrollIndex = useMemo(() => {
     if ((!isPlaying && !scrollIntoViewMannally) || (isPlaying && !followMode))
       return undefined;
@@ -85,6 +91,7 @@ export default function PdfCanvas() {
             scale={debouncedScale}
           >
             <List
+              ref={listRef}
               height={size?.height || 0}
               width={size?.width || 0}
               rowHeight={pageHeight * debouncedScale}
