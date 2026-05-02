@@ -7,9 +7,12 @@ import { Link } from "react-router";
 export default function AiTextFilterToggle() {
   const isEnabled = usePdfUiStore((e) => e.cleanTextByAi);
   const setIsEnabled = usePdfUiStore((e) => e.setCleanTextByAi);
-  const [groqKey] = useLocalStorage("groq_api_key");
+  const [provider] = useLocalStorage("ai_provider", "");
+  const [apiKey] = useLocalStorage("ai_api_key", "");
 
-  if (!groqKey) {
+  const hasConfig = provider && apiKey;
+
+  if (!hasConfig) {
     return (
       <div className="space-y-2">
         <label className="text-sm font-medium">Text Enhancement</label>
