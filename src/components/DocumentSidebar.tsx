@@ -8,7 +8,7 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { DynamicIcon } from "lucide-react/dynamic";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
 const PageScale = lazy(() => import("./pdf/PageScale"));
@@ -24,6 +24,8 @@ interface DocumentSidebarProps {
 }
 
 export default function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   const ControlsContent = () => (
     <div className="space-y-6">
       <div>
@@ -85,17 +87,45 @@ export default function DocumentSidebar({ docInfo }: DocumentSidebarProps) {
         )}
       </div>
 
+      {/* Floating expand button when sidebar is collapsed (desktop only) */}
+      {isCollapsed && (
+        <div className="hidden md:block fixed top-4 left-4 z-50">
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setIsCollapsed(false)}
+            className="shadow-md"
+          >
+            <DynamicIcon name="panel-right-open" className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
+
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-80 border-r bg-muted/30 flex-col">
+      <aside
+        className={`hidden md:flex border-r bg-muted/30 flex-col transition-all duration-300 ${
+          isCollapsed ? "w-0 overflow-hidden opacity-0" : "w-80 opacity-100"
+        }`}
+      >
         {/* Header Section */}
         <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="ghost" size="sm">
-                <DynamicIcon name="arrow-left" className="h-4 w-4 mr-2" />
-                Back
-              </Button>
-            </Link>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link to="/">
+                <Button variant="ghost" size="sm">
+                  <DynamicIcon name="arrow-left" className="h-4 w-4 mr-2" />
+                  Back
+                </Button>
+              </Link>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsCollapsed(true)}
+              title="Collapse sidebar"
+            >
+              <DynamicIcon name="panel-left-open" className="h-4 w-4" />
+            </Button>
           </div>
 
           {docInfo && (
